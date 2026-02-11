@@ -1,231 +1,503 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bad-Budgetrechner | Powered by OSION Solution XR</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bad-Budgetrechner | Powered by OSION Solution XR</title>
 
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#f2f2f2,#ffffff);
-}
+  <style>
+    :root{
+      --osion-red:#b11217;
+      --osion-red-dark:#8f0f14;
+      --ink:#0b0b0f;
+      --muted:#5a5f6a;
+      --card:#ffffff;
+      --line:#e8e8ee;
+      --bg:#f6f7fb;
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+      --radius: 18px;
+    }
 
-.wrapper{
-    max-width:1000px;
-    margin:40px auto;
-    padding:30px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.08);
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 30% -10%, rgba(177,18,23,.10), transparent 60%),
+                  radial-gradient(1000px 500px at 90% 0%, rgba(143,15,20,.12), transparent 55%),
+                  var(--bg);
+    }
 
-.logo{
-    text-align:center;
-    margin-bottom:30px;
-}
+    .wrap{
+      max-width: 1040px;
+      margin: 34px auto;
+      padding: 0 16px;
+    }
 
-.logo img{
-    max-width:180px;
-}
+    .shell{
+      background: var(--card);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
 
-h1{
-    text-align:center;
-    margin-bottom:30px;
-}
+    .hero{
+      height: 180px;
+      background-image: url("osion-header.png");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
 
-.question{
-    margin-bottom:25px;
-    font-weight:bold;
-}
+    .hero:after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(0,0,0,.48) 0%, rgba(0,0,0,.12) 45%, rgba(0,0,0,.18) 100%);
+      pointer-events:none;
+    }
 
-.options{
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-}
+    .hero-inner{
+      position:relative;
+      height:100%;
+      display:flex;
+      align-items:flex-end;
+      padding: 18px 22px;
+      gap: 12px;
+      z-index:1;
+      color:#fff;
+    }
 
-.option{
-    flex:1 1 30%;
-    padding:15px;
-    border:2px solid #ddd;
-    border-radius:12px;
-    cursor:pointer;
-    transition:0.2s;
-    text-align:center;
-}
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      line-height:1.1;
+    }
 
-.option:hover{
-    border-color:#c00030;
-}
+    .brand .kicker{
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      opacity:.9;
+    }
 
-.option.active{
-    border-color:#c00030;
-    background:#ffe6ec;
-}
+    .brand .title{
+      font-size:26px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
 
-.navigation{
-    display:flex;
-    justify-content:space-between;
-    margin-top:30px;
-}
+    .content{
+      padding: 22px 22px 18px 22px;
+    }
 
-button{
-    padding:12px 20px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-}
+    .toprow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
+    }
 
-.next{
-    background:#c00030;
-    color:white;
-}
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-.back{
-    background:black;
-    color:white;
-}
+    .progress{
+      width: 280px;
+      height: 10px;
+      background: #eceef6;
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.05);
+    }
 
-.result{
-    margin-top:30px;
-    padding:20px;
-    background:#f8f8f8;
-    border-radius:12px;
-}
+    .bar{
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #000 0%, var(--osion-red-dark) 55%, var(--osion-red) 100%);
+      transition: width .25s ease;
+    }
 
-.footer{
-    text-align:center;
-    margin-top:40px;
-    font-size:12px;
-    color:#777;
-}
+    .question{
+      font-size: 16px;
+      font-weight: 800;
+      margin: 10px 0 14px 0;
+      letter-spacing: -.01em;
+    }
 
-</style>
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 14px;
+    }
+    @media (max-width: 720px){
+      .grid{grid-template-columns:1fr}
+      .progress{width:100%}
+      .hero{height:160px}
+    }
+    .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
+    @media (max-width: 900px){
+      .grid.cols-3{grid-template-columns:1fr}
+    }
+
+    .opt{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 14px;
+      background: #fff;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+      min-height: 78px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap: 6px;
+      position:relative;
+      user-select:none;
+    }
+    .opt:hover{
+      transform: translateY(-1px);
+      border-color: rgba(177,18,23,.55);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
+    .opt.active{
+      border-color: var(--osion-red);
+      box-shadow: 0 14px 30px rgba(177,18,23,.18);
+    }
+    .opt .label{
+      font-weight: 900;
+      letter-spacing: -.01em;
+    }
+    .opt .sub{
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.25;
+    }
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn{
+      border:0;
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .btn.back{
+      background: #0f0f14;
+      color:#fff;
+    }
+    .btn.back:disabled{opacity:.35; cursor:not-allowed}
+
+    .result{
+      background: #f3f4f8;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .result h3{margin:0 0 10px 0}
+    .rows{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 720px){ .rows{grid-template-columns:1fr} }
+
+    .row{
+      background:#fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .total{
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: 950;
+      display:flex;
+      justify-content:flex-end;
+    }
+    .cta{
+      margin-top: 12px;
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+    .cta a{
+      text-decoration:none;
+      display:inline-block;
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-weight: 900;
+    }
+    .cta .primary{
+      background: var(--osion-red);
+      color:#fff;
+    }
+    .cta .ghost{
+      background: #0f0f14;
+      color:#fff;
+    }
+
+    .footer{
+      padding: 0 22px 18px 22px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <div class="shell">
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="brand">
+            <div class="kicker">Powered by OSION Solution XR</div>
+            <div class="title">Interaktiver Bad-Budgetrechner</div>
+          </div>
+        </div>
+      </div>
 
-<div class="wrapper">
+      <div class="content">
+        <div class="toprow">
+          <div class="hint">Unverbindliche Kostenschätzung auf Basis deiner Auswahl.</div>
+          <div class="progress" aria-label="Fortschritt">
+            <div class="bar" id="bar"></div>
+          </div>
+        </div>
 
-<div class="logo">
-<img src="osion-logo.png" alt="OSION Solution XR">
-</div>
+        <div id="app"></div>
 
-<h1>Interaktiver Bad-Budgetrechner</h1>
+        <div class="nav">
+          <button class="btn back" id="backBtn" type="button">Zurück</button>
+          <div class="hint" id="stepHint"></div>
+        </div>
+      </div>
 
-<div id="calculator"></div>
-
-<div class="footer">
-Powered by OSION Solution XR – Unverbindliche Kostenschätzung
-</div>
-
-</div>
+      <div class="footer">
+        © OSION Solution XR – Unverbindliche Kostenschätzung. Keine Preisgarantie.
+      </div>
+    </div>
+  </div>
 
 <script>
+(() => {
+  // Preise: realistische Mittelklasse als Basis, Netto. MwSt. wird am Ende addiert.
+  const VAT = 0.19;
 
-const steps = [
-{
-question:"Wie groß ist Ihr Bad?",
-options:[
-{label:"4-5 qm", value:15000},
-{label:"5-7 qm", value:18000},
-{label:"7-10 qm", value:23000},
-{label:">10 qm", value:28000}
-]
-},
-{
-question:"Qualitätsstufe?",
-multiplier:true,
-options:[
-{label:"Basic", value:0.85},
-{label:"Komfort", value:1},
-{label:"Luxus", value:1.3}
-]
-},
-{
-question:"Dusche oder Badewanne?",
-multiplier:true,
-options:[
-{label:"Dusche", value:1},
-{label:"Badewanne", value:1.07},
-{label:"Beides", value:1.15}
-]
-}
-];
+  const PRICES = {
+    baseByAreaNet: {
+      "4-5 qm": 14500,
+      "5-7 qm": 17500,
+      "7-10 qm": 22000,
+      ">10 qm": 27500
+    },
+    qualityFactor: { "Basic": 0.85, "Komfort": 1.00, "Luxus": 1.28 },
+    tubFactor: { "Dusche": 1.00, "Badewanne": 1.06, "Dusche und Badewanne": 1.14 }
+  };
 
-let currentStep=0;
-let basePrice=0;
-let multiplier=1;
+  const breakdownWeights = {
+    "Demontage / Montage / Installation": 0.34,
+    "Malerarbeiten": 0.06,
+    "Fliesenarbeiten / Fliesen": 0.22,
+    "Elektroarbeiten": 0.08,
+    "Ausstattung": 0.30
+  };
 
-function renderStep(){
+  const steps = [
+    {
+      key: "area",
+      question: "Wie groß ist Ihr Bad?",
+      cols: 2,
+      options: [
+        { label: "4-5 qm", sub: "Kompaktbad / Standard" },
+        { label: "5-7 qm", sub: "Typisches Familienbad" },
+        { label: "7-10 qm", sub: "Komfortgröße" },
+        { label: ">10 qm", sub: "Großes Bad" }
+      ]
+    },
+    {
+      key: "quality",
+      question: "Welche Qualitätsstufe wünschen Sie?",
+      cols: 3,
+      options: [
+        { label: "Basic", sub: "Preisbewusst, solide Auswahl" },
+        { label: "Komfort", sub: "Mittelklasse, typischer Standard" },
+        { label: "Luxus", sub: "Hochwertige Materialien & Ausstattung" }
+      ]
+    },
+    {
+      key: "tub",
+      question: "Dusche und/oder Badewanne?",
+      cols: 3,
+      options: [
+        { label: "Dusche", sub: "Modern & effizient" },
+        { label: "Badewanne", sub: "Entspannung & Komfort" },
+        { label: "Dusche und Badewanne", sub: "Maximaler Komfort" }
+      ]
+    },
+    { key: "result" }
+  ];
 
-const container=document.getElementById("calculator");
-container.innerHTML="";
+  const state = { area: null, quality: null, tub: null };
+  let idx = 0;
 
-if(currentStep>=steps.length){
-let total=Math.round(basePrice*multiplier*1.19);
+  const app = document.getElementById("app");
+  const bar = document.getElementById("bar");
+  const backBtn = document.getElementById("backBtn");
+  const stepHint = document.getElementById("stepHint");
 
-container.innerHTML=`
-<div class="result">
-<h2>Voraussichtliche Gesamtkosten:</h2>
-<p><strong>${total.toLocaleString("de-DE")} € inkl. MwSt.</strong></p>
-<p>Diese Kalkulation dient als erste Orientierung.</p>
-<a href="#" style="display:inline-block;margin-top:15px;padding:12px 20px;background:#c00030;color:white;text-decoration:none;border-radius:8px;">Zum Kontaktformular</a>
-</div>
-`;
+  function formatEUR(v){
+    return v.toLocaleString("de-DE", { style:"currency", currency:"EUR" });
+  }
 
-return;
-}
+  function calcNet(){
+    const base = PRICES.baseByAreaNet[state.area] ?? 0;
+    const q = PRICES.qualityFactor[state.quality] ?? 1;
+    const t = PRICES.tubFactor[state.tub] ?? 1;
+    return Math.round(base * q * t);
+  }
 
-const step=steps[currentStep];
+  function breakdown(net){
+    const out = {};
+    for (const [k,w] of Object.entries(breakdownWeights)){
+      out[k] = Math.round(net * w);
+    }
+    return out;
+  }
 
-let html=`<div class="question">${step.question}</div><div class="options">`;
+  function setProgress(){
+    const p = Math.round((idx / (steps.length - 1)) * 100);
+    bar.style.width = p + "%";
+  }
 
-step.options.forEach((opt,i)=>{
-html+=`<div class="option" onclick="selectOption(${i})">${opt.label}</div>`;
-});
+  function render(){
+    setProgress();
 
-html+=`</div>
-<div class="navigation">`;
+    backBtn.disabled = idx === 0;
+    stepHint.textContent = idx < steps.length - 1 ? `Schritt ${idx+1} von ${steps.length-1}` : "";
 
-if(currentStep>0){
-html+=`<button class="back" onclick="back()">Zurück</button>`;
-}
+    const s = steps[idx];
 
-html+=`<button class="next" onclick="next()">Weiter</button></div>`;
+    if (s.key === "result"){
+      const net = calcNet();
+      const vat = Math.round(net * VAT);
+      const gross = net + vat;
+      const parts = breakdown(net);
 
-container.innerHTML=html;
-}
+      const summary =
+        `Bad-Kalkulation (unverbindlich)\n` +
+        `Fläche: ${state.area}\n` +
+        `Qualität: ${state.quality}\n` +
+        `Dusche/Badewanne: ${state.tub}\n\n` +
+        `Summe (netto): ${formatEUR(net)}\n` +
+        `MwSt.: ${formatEUR(vat)}\n` +
+        `Summe (brutto): ${formatEUR(gross)}\n`;
 
-function selectOption(index){
-const step=steps[currentStep];
-const value=step.options[index].value;
+      const mailHref =
+        "mailto:?subject=" + encodeURIComponent("Bad-Kalkulation (unverbindlich)") +
+        "&body=" + encodeURIComponent(summary);
 
-if(currentStep===0){
-basePrice=value;
-}else{
-multiplier*=value;
-}
+      app.innerHTML = `
+        <div class="result">
+          <h3>Preisinformation</h3>
+          <div class="hint">Orientierungswerte auf Basis deiner Auswahl.</div>
 
-document.querySelectorAll(".option").forEach(o=>o.classList.remove("active"));
-document.querySelectorAll(".option")[index].classList.add("active");
-}
+          <div class="rows">
+            ${Object.entries(parts).map(([k,v]) => `
+              <div class="row"><div>${k}</div><div><b>${formatEUR(v)}</b></div></div>
+            `).join("")}
+            <div class="row"><div>MwSt.</div><div><b>${formatEUR(vat)}</b></div></div>
+          </div>
 
-function next(){
-currentStep++;
-renderStep();
-}
+          <div class="total">Summe Total (mit MwSt.): ${formatEUR(gross)}</div>
 
-function back(){
-currentStep--;
-renderStep();
-}
+          <div class="cta">
+            <a class="ghost" href="${mailHref}">Ergebnis per E-Mail</a>
+            <a class="primary" href="#" id="copyBtn">Ergebnis kopieren</a>
+          </div>
+        </div>
+      `;
 
-renderStep();
+      document.getElementById("copyBtn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        try{
+          await navigator.clipboard.writeText(summary);
+          alert("Ergebnis kopiert.");
+        }catch{
+          alert("Kopieren nicht möglich. Bitte manuell übernehmen.");
+        }
+      });
 
+      return;
+    }
+
+    const gridClass = s.cols === 3 ? "grid cols-3" : "grid";
+
+    app.innerHTML = `
+      <div class="question">${s.question}</div>
+      <div class="${gridClass}">
+        ${s.options.map(opt => {
+          const active = state[s.key] === opt.label ? "active" : "";
+          return `
+            <div class="opt ${active}" data-val="${opt.label}" role="button" tabindex="0">
+              <div class="label">${opt.label}</div>
+              <div class="sub">${opt.sub || ""}</div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    function pick(val){
+      state[s.key] = val;
+
+      // UI update
+      app.querySelectorAll(".opt").forEach(el => el.classList.toggle("active", el.dataset.val === val));
+
+      // Auto-Weiter (ohne extra Button)
+      window.setTimeout(() => {
+        idx = Math.min(idx + 1, steps.length - 1);
+        render();
+      }, 180);
+    }
+
+    app.querySelectorAll(".opt").forEach(el => {
+      el.addEventListener("click", () => pick(el.dataset.val));
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          pick(el.dataset.val);
+        }
+      });
+    });
+  }
+
+  backBtn.addEventListener("click", () => {
+    idx = Math.max(idx - 1, 0);
+    render();
+  });
+
+  render();
+})();
 </script>
-
 </body>
 </html>

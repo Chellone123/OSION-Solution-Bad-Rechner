@@ -2,816 +2,899 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interaktiver Bad-Budgetrechner | Powered by OSION Solution XR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bad-Budgetrechner | Powered by OSION Solution XR</title>
 
-  <!-- Moderne Schrift -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!--
+    ASSETS (im Repo, gleicher Ordner wie index.html):
+    - MD085.png            (dein Header-Hintergrund, bevorzugt)
+    - osion-header.png     (Fallback, wenn MD085.png nicht existiert)
+    - MGU-0015 Logo OSION Solution XR.png (optional: Logo links oben, falls du es separat nutzen willst)
+  -->
 
   <style>
     :root{
-      --bg-0:#0b0b0e;
-      --bg-1:#131319;
-      --card: rgba(255,255,255,0.08);
-      --card-2: rgba(255,255,255,0.06);
-      --stroke: rgba(255,255,255,0.14);
-      --stroke-2: rgba(255,255,255,0.10);
-      --text:#f3f4f6;
-      --muted:#b9bbc6;
-      --muted2:#8f93a3;
-      --accent:#b11217;
-      --accent2:#7f0f14;
-      --shadow: 0 20px 60px rgba(0,0,0,0.55);
-      --radius: 18px;
+      --bg0:#050506;
+      --bg1:#0b0b0f;
+      --card: rgba(20, 20, 24, 0.62);
+      --card2: rgba(14, 14, 18, 0.55);
+      --stroke: rgba(255,255,255,0.10);
+      --stroke2: rgba(255,255,255,0.14);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.52);
+      --accentA:#a100ff;
+      --accentB:#ff0038;
+      --accentGlow: rgba(255,0,56,0.22);
+      --accentGlow2: rgba(161,0,255,0.18);
+      --radius: 22px;
+      --radius2: 18px;
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(900px 450px at 18% 10%, rgba(177,18,23,0.22), transparent 55%),
-        radial-gradient(900px 450px at 85% 25%, rgba(127,15,20,0.22), transparent 55%),
-        radial-gradient(900px 650px at 50% 90%, rgba(93,0,255,0.10), transparent 60%),
-        linear-gradient(180deg, #07070a, #0b0b0e 30%, #07070a);
-      overflow-x:hidden;
-    }
-
-    /* Container */
-    .stage{
-      min-height:100%;
+        radial-gradient(1100px 600px at 15% 15%, rgba(161,0,255,0.18), transparent 60%),
+        radial-gradient(900px 520px at 88% 18%, rgba(255,0,56,0.16), transparent 55%),
+        radial-gradient(900px 700px at 50% 95%, rgba(255,255,255,0.06), transparent 65%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:48px 18px;
+      padding: 40px 18px;
     }
 
     .shell{
-      width:min(1160px, 100%);
-      border-radius: 22px;
-      overflow:hidden;
-      box-shadow: var(--shadow);
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.10);
-      position:relative;
+      width: min(1240px, 96vw); /* Größer als vorher */
     }
 
-    /* Header mit OSION Hintergrundlogo */
+    .glass{
+      border-radius: 26px;
+      overflow:hidden;
+      box-shadow:
+        0 18px 70px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(255,255,255,0.06) inset;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    /* HEADER: größer + Logo vollständig sichtbar */
     .hero{
       position:relative;
-      padding: 26px 28px 22px 28px;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.70)),
-        url('MGU-0015 Logo OSION Solution XR.png') no-repeat center 18px;
-      background-size: contain;              /* ✅ Logo wird nicht abgeschnitten */
-      background-attachment: fixed;          /* ✅ hochwertiger Look */
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      min-height: 210px;                     /* ✅ mehr Platz, damit Logo vollständig sichtbar wird */
+      height: 270px; /* höher, damit das Logo sicher komplett sichtbar ist */
+      display:flex;
+      align-items:flex-end;
+      padding: 22px 26px 18px 26px;
+      background-color: rgba(0,0,0,0.35);
+
+      /* Erst MD085.png probieren, sonst Fallback */
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.70)),
+        url('MD085.png'),
+        url('osion-header.png');
+      background-repeat: no-repeat, no-repeat, no-repeat;
+
+      /* WICHTIG: contain = komplett sichtbar */
+      background-size: cover, contain, contain;
+
+      /* Logo zentriert + leicht nach oben, damit es nicht abgeschnitten wirkt */
+      background-position: center, center 16px, center 16px;
     }
 
-    /* leichter „Frost“-Overlay Effekt */
-    .hero::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(900px 340px at 50% 0%, rgba(255,255,255,0.06), transparent 55%);
-      pointer-events:none;
-    }
-
-    .heroTop{
-      position:relative;
+    .heroTopRow{
+      position:absolute;
+      top: 16px;
+      left: 18px;
+      right: 18px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:16px;
+      gap: 12px;
+      pointer-events:none;
     }
 
-    .brand{
+    .brandPill{
+      pointer-events:none;
       display:flex;
       align-items:center;
-      gap:12px;
-      min-width: 260px;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.38);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
 
-    .brandBadge{
-      width:34px; height:34px;
-      border-radius: 11px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex: 0 0 auto;
+    .brandMark{
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
       overflow:hidden;
     }
 
-    /* Optional kleines Logo oben links (nicht das Hintergrundlogo) */
-    .brandBadge img{
-      width: 26px; height:26px;
+    .brandMark img{
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      opacity:0.95;
+      display:block;
+      padding: 4px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
     }
 
     .brandText{
       display:flex;
       flex-direction:column;
-      line-height:1.1;
+      line-height:1.05;
+      gap: 2px;
     }
-    .brandText .powered{
-      font-size:12px;
+    .brandText small{
       letter-spacing: 0.12em;
-      text-transform:uppercase;
-      color: rgba(243,244,246,0.75);
-      font-weight:600;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.72);
+      font-weight: 600;
+      font-size: 11px;
     }
-    .brandText .title{
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing:-0.02em;
-      margin-top:6px;
+    .brandText span{
+      font-weight: 820;
+      font-size: 14px;
+      color: rgba(255,255,255,0.95);
     }
 
-    .pill{
+    .badge{
+      pointer-events:none;
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:10px 12px;
+      gap: 10px;
+      padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(243,244,246,0.85);
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
+      background: rgba(0,0,0,0.40);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     }
     .dot{
-      width:10px; height:10px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(177,18,23,0.20);
+      background: rgba(255,0,56,0.95);
+      box-shadow: 0 0 0 4px rgba(255,0,56,0.18);
+    }
+    .badge span{
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.92);
+      font-size: 13px;
     }
 
-    .heroSub{
-      position:relative;
-      margin-top: 16px;
+    .heroMain{
+      width: 100%;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
       justify-content:space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 18px;
     }
-    .heroSub p{
+
+    .heroTitleBlock{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      max-width: 760px;
+    }
+
+    .h1{
       margin:0;
-      color: rgba(243,244,246,0.78);
-      font-size: 14px;
-      max-width: 560px;
+      font-size: 34px; /* größer */
+      letter-spacing: -0.02em;
+      line-height:1.05;
+      text-shadow: 0 14px 40px rgba(0,0,0,0.55);
+    }
+
+    .sub{
+      margin:0;
+      color: rgba(255,255,255,0.78);
+      font-size: 15px;
     }
 
     .progressWrap{
       display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 320px;
-      justify-content:flex-end;
-      flex: 1 1 auto;
+      flex-direction:column;
+      align-items:flex-end;
+      gap: 10px;
+      min-width: 280px;
     }
-    .progress{
-      flex: 1 1 auto;
+    .stepText{
+      font-size: 13px;
+      color: rgba(255,255,255,0.78);
+      font-weight: 650;
+    }
+    .bar{
+      width: 320px;
+      max-width: 38vw;
       height: 10px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.10);
       overflow:hidden;
-      max-width: 420px;
-      min-width: 240px;
+      box-shadow: 0 10px 26px rgba(0,0,0,0.25) inset;
     }
-    .progress > div{
+    .bar > div{
       height:100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      width:0%;
       border-radius: 999px;
-      transition: width 220ms ease;
-    }
-    .stepLabel{
-      color: rgba(243,244,246,0.70);
-      font-size: 12px;
-      font-weight: 600;
+      background: linear-gradient(90deg, rgba(255,0,56,0.85), rgba(161,0,255,0.85));
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 10px 30px rgba(255,0,56,0.10);
+      transition: width 240ms ease;
     }
 
-    /* Main */
-    .main{
-      padding: 22px 28px 26px 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+    .content{
+      padding: 18px 22px 22px 22px;
+      background: rgba(0,0,0,0.34);
     }
 
     .panel{
       border-radius: var(--radius);
-      background: rgba(255,255,255,0.05);
+      background: linear-gradient(180deg, rgba(20,20,24,0.62), rgba(12,12,16,0.55));
       border: 1px solid rgba(255,255,255,0.10);
-      overflow:hidden;
+      box-shadow:
+        0 20px 70px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(255,255,255,0.04) inset;
+      padding: 20px;
     }
 
-    .panelHead{
-      padding: 16px 18px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 14px;
-      background: rgba(0,0,0,0.22);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .panelHead h2{
-      margin:0;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing:-0.01em;
-    }
-    .panelHead .hint{
-      margin:6px 0 0 0;
-      color: rgba(243,244,246,0.70);
-      font-size: 12.5px;
-      line-height:1.35;
+    .qTitle{
+      margin:0 0 16px 0;
+      font-size: 20px; /* größer */
+      font-weight: 820;
+      letter-spacing: -0.01em;
+      color: rgba(255,255,255,0.95);
     }
 
-    .panelBody{
-      padding: 18px;
-    }
-
+    /* GRID: dynamisch je Step (2, 3 oder 4) */
     .grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
     }
-    @media (max-width: 760px){
-      .grid{ grid-template-columns: 1fr; }
-      .progressWrap{ min-width: 100%; justify-content:flex-start; }
-      .brandText .title{ font-size:22px; }
-      .hero{ min-height: 240px; }
-    }
+    .grid.cols-2{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cols-3{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.cols-4{ grid-template-columns: repeat(2, minmax(0, 1fr)); } /* 4 Buttons -> 2x2, passt optisch */
 
     .option{
       cursor:pointer;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      padding: 16px 16px;
-      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
-      position:relative;
+      border-radius: 18px;
+      padding: 18px 18px;
       min-height: 92px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-    }
-    .option:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.075);
-      border-color: rgba(255,255,255,0.18);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.28);
-    }
-    .option.selected{
-      border-color: rgba(177,18,23,0.85);
-      box-shadow: 0 0 0 1px rgba(177,18,23,0.35), 0 16px 34px rgba(0,0,0,0.35);
-      background: rgba(177,18,23,0.10);
-    }
-    .optTitle{
-      font-weight:800;
-      font-size: 14px;
-      letter-spacing:-0.01em;
-    }
-    .optSub{
-      margin-top:6px;
-      color: rgba(243,244,246,0.70);
-      font-size: 12.5px;
+      background:
+        radial-gradient(400px 120px at 20% 10%, rgba(255,255,255,0.06), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.25),
+        0 0 0 1px rgba(255,255,255,0.04) inset;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease, filter 180ms ease;
+      position:relative;
+      overflow:hidden;
     }
 
-    .actions{
-      margin-top: 14px;
+    .option:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(120deg, rgba(255,0,56,0.16), rgba(161,0,255,0.14));
+      opacity:0;
+      transition: opacity 180ms ease;
+      pointer-events:none;
+    }
+
+    .option:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.20);
+      box-shadow:
+        0 16px 44px rgba(0,0,0,0.40),
+        0 0 0 1px rgba(255,255,255,0.06) inset,
+        0 0 34px rgba(255,0,56,0.08);
+      filter: brightness(1.05);
+    }
+
+    /* SELECTED: deutlich sichtbar + helleres “White”-Feeling */
+    .option.selected{
+      border-color: rgba(255,0,56,0.55);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(255,255,255,0.08) inset,
+        0 0 44px var(--accentGlow),
+        0 0 42px var(--accentGlow2);
+      background:
+        radial-gradient(520px 180px at 22% 18%, rgba(255,255,255,0.14), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+      transform: translateY(-1px);
+    }
+    .option.selected:before{ opacity: 1; }
+
+    .optLabel{
+      font-size: 18px; /* größer */
+      font-weight: 860;
+      color: rgba(255,255,255,0.95);
+      margin:0;
+      letter-spacing: -0.01em;
+      position:relative;
+    }
+
+    .optDesc{
+      margin: 8px 0 0 0;
+      color: rgba(255,255,255,0.70);
+      font-size: 13px;
+      position:relative;
+    }
+
+    .footerRow{
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 12px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.08);
     }
 
     .btn{
       cursor:pointer;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(255,255,255,0.06);
-      color: rgba(243,244,246,0.86);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13px;
-      transition: background 140ms ease, transform 140ms ease, border-color 140ms ease;
-      user-select:none;
+      color: rgba(255,255,255,0.92);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 750;
+      letter-spacing: 0.01em;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
     }
     .btn:hover{
-      background: rgba(255,255,255,0.08);
       transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.20);
-    }
-    .btn:active{ transform: translateY(0); }
-
-    .btn.primary{
-      border-color: rgba(177,18,23,0.75);
-      background: linear-gradient(90deg, rgba(127,15,20,0.9), rgba(177,18,23,0.9));
+      border-color: rgba(255,255,255,0.22);
+      box-shadow: 0 16px 44px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.085);
     }
 
-    .btn.secondary{
-      border-color: rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.05);
+    .btnPrimary{
+      border: 1px solid rgba(255,0,56,0.45);
+      background: linear-gradient(90deg, rgba(255,0,56,0.85), rgba(161,0,255,0.55));
+      box-shadow: 0 18px 55px rgba(255,0,56,0.10);
+    }
+    .btnPrimary:hover{
+      border-color: rgba(255,0,56,0.60);
+      box-shadow: 0 22px 70px rgba(255,0,56,0.15);
     }
 
-    /* Ergebnis */
-    .resultBox{
-      border-radius: 16px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.10);
-      overflow:hidden;
+    .hint{
+      font-size: 12px;
+      color: rgba(255,255,255,0.62);
+      text-align:right;
     }
-    .resultHead{
-      padding: 14px 16px;
-      background: rgba(0,0,0,0.20);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+
+    .copyright{
+      margin-top: 14px;
+      text-align:center;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+    }
+
+    /* RESULTS */
+    .resultTop{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
-      gap:12px;
-      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
     }
-    .resultHead h3{
+    .resultTop h3{
       margin:0;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing:-0.01em;
+      font-size: 18px;
+      font-weight: 860;
     }
-    .resultHead .total{
-      font-size: 16px;
-      font-weight: 900;
-      color: #fff;
+    .sumBox{
+      text-align:right;
     }
-    .resultBody{
-      padding: 14px 16px 16px 16px;
-      color: rgba(243,244,246,0.78);
-      font-size: 13px;
-      line-height: 1.45;
+    .sumBox .sum{
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+    .sumBox .small{
+      font-size: 12px;
+      color: rgba(255,255,255,0.72);
+      margin-top: 2px;
+    }
+
+    .text{
+      color: rgba(255,255,255,0.78);
+      font-size: 14px;
+      line-height: 1.55;
+      margin: 10px 0;
+    }
+
+    .split{
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .list{
+      margin:0;
+      padding-left: 16px;
+      color: rgba(255,255,255,0.80);
+      line-height: 1.55;
+      font-size: 14px;
     }
 
     .table{
-      width:100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 6px;
+      border-radius: 14px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.10);
     }
-    .table td{
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      vertical-align: top;
-    }
-    .table td:nth-child(2){
-      text-align:right;
-      font-weight: 800;
-      color: rgba(243,244,246,0.92);
-    }
-
-    .downloadRow{
+    .row{
       display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top: 14px;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 14px;
     }
+    .row:last-child{ border-bottom:none; }
+    .row strong{ font-weight: 820; color: rgba(255,255,255,0.90); }
 
-    a.linkBtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none;
-    }
-
-    .footerNote{
-      margin-top: 14px;
-      text-align:center;
-      color: rgba(243,244,246,0.55);
-      font-size: 12px;
+    @media (max-width: 920px){
+      .hero{ height: 250px; background-position: center, center 10px, center 10px; }
+      .progressWrap{ min-width: 220px; }
+      .grid.cols-3{ grid-template-columns: 1fr; } /* mobil: untereinander, besser klickbar */
+      .grid.cols-2{ grid-template-columns: 1fr; }
+      .grid.cols-4{ grid-template-columns: 1fr; }
+      .bar{ width: 260px; }
+      .h1{ font-size: 28px; }
     }
   </style>
 </head>
 
 <body>
-<div class="stage">
   <div class="shell">
-
-    <!-- HEADER -->
-    <header class="hero">
-      <div class="heroTop">
-        <div class="brand">
-          <div class="brandBadge" title="OSION Solution XR">
-            <!-- kleines Badge-Logo (optional). Du kannst das auch rausnehmen -->
-            <img src="MGU-0015 Logo OSION Solution XR.png" alt="OSION Solution XR">
+    <div class="glass">
+      <div class="hero">
+        <div class="heroTopRow">
+          <div class="brandPill">
+            <div class="brandMark" aria-hidden="true">
+              <!-- Mini-Logo links oben (optional). Wenn Datei nicht existiert, zeigt der Browser einfach nichts. -->
+              <img src="MGU-0015 Logo OSION Solution XR.png" alt="OSION"/>
+            </div>
+            <div class="brandText">
+              <small>Powered by OSION Solution XR</small>
+              <span>Interaktiver Bad-Budgetrechner</span>
+            </div>
           </div>
-          <div class="brandText">
-            <div class="powered">Powered by OSION Solution XR</div>
-            <div class="title">Interaktiver Bad-Budgetrechner</div>
+
+          <div class="badge">
+            <div class="dot"></div>
+            <span>Unverbindlich</span>
           </div>
         </div>
 
-        <div class="pill" title="Unverbindlich">
-          <span class="dot"></span>
-          Unverbindlich
+        <div class="heroMain">
+          <div class="heroTitleBlock">
+            <h1 class="h1">Interaktiver Bad-Budgetrechner</h1>
+            <p class="sub">Unverbindliche Kostenschätzung auf Basis deiner Auswahl.</p>
+          </div>
+
+          <div class="progressWrap">
+            <div class="stepText" id="stepText">Schritt 1 von 8</div>
+            <div class="bar"><div id="barFill"></div></div>
+          </div>
         </div>
       </div>
 
-      <div class="heroSub">
-        <p>Unverbindliche Kostenschätzung auf Basis deiner Auswahl.</p>
-
-        <div class="progressWrap">
-          <div class="progress" aria-label="Fortschritt">
-            <div id="progressBar"></div>
-          </div>
-          <div class="stepLabel" id="stepLabel">Schritt 1 von 8</div>
-        </div>
-      </div>
-    </header>
-
-    <!-- MAIN -->
-    <main class="main">
-      <section class="panel">
-        <div class="panelHead">
-          <div>
-            <h2 id="questionTitle">Lade…</h2>
-            <p class="hint" id="questionHint"></p>
-          </div>
-        </div>
-
-        <div class="panelBody">
+      <div class="content">
+        <div class="panel">
+          <h2 class="qTitle" id="questionTitle">…</h2>
           <div class="grid" id="optionsGrid"></div>
 
-          <div class="actions">
-            <button class="btn secondary" id="backBtn" onclick="goBack()" disabled>Zurück</button>
-            <button class="btn primary" id="restartBtn" onclick="restart()" style="display:none;">Neu starten</button>
+          <div class="footerRow">
+            <button class="btn" id="backBtn" type="button">Zurück</button>
+            <div class="hint" id="hint">Auswahl trifft automatisch die nächste Ansicht.</div>
+          </div>
+
+          <div class="copyright">
+            © OSION Solution XR – Unverbindliche Kostenschätzung. Keine Preisgarantie.
           </div>
         </div>
-      </section>
-
-      <div class="footerNote">© OSION Solution XR – Unverbindliche Kostenschätzung. Keine Preisgarantie.</div>
-    </main>
-
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
-  // ===========
-  // KONFIG
-  // ===========
-  const CONTACT_URL = "https://www.elitebau-hamburg.de/"; // ✅ Zielwebseite
+(function(){
+  const VAT = 0.19;
 
-  // Preise (Basis-Kategorien, werden mit Multiplikatoren gewichtet)
-  // Die Werte hier sind so gewählt, dass die Range realistisch ist (ca. 15.6k – 39k für die Extremfälle).
-  const BASE = {
-    demontage_montage_installation: 5200,
-    fliesen: 2200,
-    elektro: 1100,
-    maler: 650,
-    ausstattung: 9000
+  // --- Preislogik (auf deine Screenshots kalibriert) ---
+  // Minimal-Szenario (Eigentümer / Sanierung / 1 Person / Basic / 4–5 / Dusche / Später) ~ 15.664 €
+  // Maximal-Szenario (Eigentümer / Neubau / 4 Personen / Luxus / >10 / Dusche+Wanne / 1–3 Monate) ~ 39.023 €
+  const PRICE_MODEL = {
+    base: 12660,       // Basis netto
+    fixed: 500,        // Planung/Anfahrt/Orga netto
+    sizeAdd: {
+      "4-5": 0,
+      "5-7": 1200,
+      "7-10": 2800,
+      ">10": 6500
+    },
+    peopleAdd: {
+      "1": 0,
+      "2": 400,
+      "3": 800,
+      "4": 1200
+    },
+    ownerMult: {
+      "Eigentümer": 1.00,
+      "Mieter": 1.04
+    },
+    projectMult: {
+      "Sanierung": 1.00,
+      "Neubau": 1.10
+    },
+    qualityMult: {
+      "Basic": 1.00,
+      "Komfort": 1.12,
+      "Luxus": 1.25
+    },
+    bathMult: {
+      "Dusche": 1.00,
+      "Badewanne": 1.06,
+      "Dusche und Badewanne": 1.11
+    },
+    timeMult: {
+      "Später": 1.00,
+      "3-6 Monate": 1.01,
+      "1-3 Monate": 1.03
+    },
+    // Aufteilung netto in Positionen (Summe = 1.0)
+    split: {
+      installation: 0.2884,
+      tiles:        0.1220,
+      electrical:   0.0580,
+      painting:     0.0324,
+      equipment:    0.4992
+    }
   };
 
-  // ===========
-  // STEPS
-  // ===========
+  // --- Steps / UI ---
   const steps = [
     {
-      key: "ownership",
+      key: "owner",
       title: "Sind Sie Eigentümer oder Mieter?",
-      hint: "",
+      columns: 2,
       options: [
-        { label: "Eigentümer", value: "owner", sub: "Eigene Immobilie" },
-        { label: "Mieter", value: "tenant", sub: "Abstimmung mit Vermieter nötig" }
+        { label:"Eigentümer", desc:"Eigene Immobilie" },
+        { label:"Mieter", desc:"Abstimmung mit Vermieter nötig" }
       ]
     },
     {
       key: "project",
-      title: "Planen Sie eine Badsanierung oder einen Neubau?",
-      hint: "",
+      title: "Planen Sie eine Badezimmer-Sanierung oder einen Neubau?",
+      columns: 2,
       options: [
-        { label: "Sanierung", value: "renovation", sub: "Bestand wird modernisiert" },
-        { label: "Neubau", value: "newbuild", sub: "Komplett neues Bad" }
+        { label:"Sanierung", desc:"Bestand wird modernisiert" },
+        { label:"Neubau", desc:"Komplett neues Bad" }
       ]
     },
     {
       key: "people",
-      title: "Wie viele Personen leben im Haushalt?",
-      hint: "",
+      title: "Wieviele Personen leben im Haushalt?",
+      columns: 4,
       options: [
-        { label: "1 Person", value: 1, sub: "Geringere Nutzung" },
-        { label: "2 Personen", value: 2, sub: "Normale Nutzung" },
-        { label: "3 Personen", value: 3, sub: "Höhere Nutzung" },
-        { label: "4 Personen", value: 4, sub: "Hohe Nutzung" }
+        { label:"1", desc:"1 Person" },
+        { label:"2", desc:"2 Personen" },
+        { label:"3", desc:"3 Personen" },
+        { label:"4", desc:"4 Personen" }
       ]
     },
     {
       key: "quality",
       title: "In welcher Qualität soll Ihr Bad ausgestattet werden?",
-      hint: "",
+      columns: 3, // WICHTIG: 3 nebeneinander
       options: [
-        { label: "Basic", value: "basic", sub: "Preis/Leistung" },
-        { label: "Komfort", value: "comfort", sub: "Solide Mittelklasse" },
-        { label: "Luxus", value: "luxury", sub: "Premium Ausstattung" }
+        { label:"Basic", desc:"Preis/Leistung" },
+        { label:"Komfort", desc:"Solide Mittelklasse" },
+        { label:"Luxus", desc:"Premium Ausstattung" }
       ]
     },
     {
-      key: "area",
+      key: "size",
       title: "Wie groß ist die Grundfläche Ihres Bades?",
-      hint: "",
+      columns: 4,
       options: [
-        { label: "4–5 qm", value: "4-5", sub: "Kompaktbad / Standard" },
-        { label: "5–7 qm", value: "5-7", sub: "Typisches Familienbad" },
-        { label: "7–10 qm", value: "7-10", sub: "Komfortgröße" },
-        { label: ">10 qm", value: ">10", sub: "Großes Bad" }
+        { label:"4-5", desc:"4–5 qm" },
+        { label:"5-7", desc:"5–7 qm" },
+        { label:"7-10", desc:"7–10 qm" },
+        { label:">10", desc:"> 10 qm" }
       ]
     },
     {
-      key: "tub",
-      title: "Dusche und/oder Badewanne?",
-      hint: "",
+      key: "bath",
+      title: "Möchten Sie Ihr Badezimmer mit einer Dusche und/oder einer Badewanne ausstatten?",
+      columns: 3, // WICHTIG: 3 nebeneinander
       options: [
-        { label: "Dusche", value: "shower", sub: "Nur Dusche" },
-        { label: "Badewanne", value: "tub", sub: "Nur Wanne" },
-        { label: "Dusche und Badewanne", value: "both", sub: "Dusche + Wanne" }
+        { label:"Dusche", desc:"Nur Dusche" },
+        { label:"Badewanne", desc:"Nur Wanne" },
+        { label:"Dusche und Badewanne", desc:"Dusche + Wanne" }
       ]
     },
     {
-      key: "timing",
+      key: "time",
       title: "Zeitpunkt der Ausführung?",
-      hint: "",
+      columns: 3, // WICHTIG: 3 nebeneinander
       options: [
-        { label: "1–3 Monate", value: "soon", sub: "Schnelle Umsetzung" },
-        { label: "3–6 Monate", value: "mid", sub: "Normaler Vorlauf" },
-        { label: "Später", value: "later", sub: "Flexible Planung" }
+        { label:"1-3 Monate", desc:"Schnelle Umsetzung" },
+        { label:"3-6 Monate", desc:"Normaler Vorlauf" },
+        { label:"Später", desc:"Flexible Planung" }
       ]
     },
     {
       key: "result",
       title: "Preisinformation",
-      hint: "Für die gewünschte Badausstattung können Sie ungefähr folgende Kosten einplanen.",
-      options: [] // wird dynamisch gerendert
+      columns: 0,
+      options: []
     }
   ];
 
-  // ===========
-  // STATE
-  // ===========
-  let stepIndex = 0;
   const state = {
-    ownership: null,
-    project: null,
-    people: null,
-    quality: null,
-    area: null,
-    tub: null,
-    timing: null
+    stepIndex: 0,
+    answers: {}
   };
 
-  // ===========
-  // HELPER: Multiplikatoren
-  // ===========
-  function multipliers(s){
-    // Eigentümer/Mieter: Mieter meist mehr Abstimmung/Mehraufwand
-    const mOwnership = (s.ownership === "tenant") ? 1.05 : 1.00;
+  const elTitle = document.getElementById("questionTitle");
+  const elGrid  = document.getElementById("optionsGrid");
+  const elBack  = document.getElementById("backBtn");
+  const elStep  = document.getElementById("stepText");
+  const elBar   = document.getElementById("barFill");
 
-    // Neubau ist teurer als Sanierung
-    const mProject = (s.project === "newbuild") ? 1.28 : 1.00;
-
-    // Personen: Nutzung/Robustheit
-    const mPeople = (s.people === 4) ? 1.12 : (s.people === 3) ? 1.08 : (s.people === 2) ? 1.04 : 1.00;
-
-    // Qualität
-    const mQuality = (s.quality === "luxury") ? 1.45 : (s.quality === "comfort") ? 1.18 : 1.00;
-
-    // Fläche
-    const mArea = (s.area === ">10") ? 1.35 : (s.area === "7-10") ? 1.18 : (s.area === "5-7") ? 1.08 : 1.00;
-
-    // Dusche/Wanne
-    const mTub = (s.tub === "both") ? 1.18 : (s.tub === "tub") ? 1.10 : 1.00;
-
-    // Timing: kurzfristig teurer
-    const mTiming = (s.timing === "soon") ? 1.12 : (s.timing === "mid") ? 1.05 : 1.00;
-
-    // Global
-    const global = mOwnership * mProject * mPeople * mQuality * mArea * mTub * mTiming;
-
-    // Kategorie-spezifisch (damit es realistischer wirkt)
-    // Fliesen/Installation hängen stärker an Fläche, Ausstattung stärker an Qualität.
-    return {
-      global,
-      install: global * 1.00,
-      fliesen: global * ( (s.area === ">10") ? 1.06 : (s.area === "7-10") ? 1.03 : 1.00 ),
-      elektro: global * 0.95,
-      maler: global * 0.90,
-      ausstattung: global * ( (s.quality === "luxury") ? 1.08 : (s.quality === "comfort") ? 1.03 : 1.00 )
-    };
+  function formatEUR(v){
+    return v.toLocaleString("de-DE", { style:"currency", currency:"EUR" });
   }
 
-  function eur(n){
-    return n.toLocaleString("de-DE", { style:"currency", currency:"EUR" });
+  function compute(){
+    const a = state.answers;
+
+    const baseNet = (PRICE_MODEL.base + PRICE_MODEL.fixed
+      + (PRICE_MODEL.sizeAdd[a.size] ?? 0)
+      + (PRICE_MODEL.peopleAdd[a.people] ?? 0)
+    );
+
+    const mult =
+      (PRICE_MODEL.ownerMult[a.owner] ?? 1) *
+      (PRICE_MODEL.projectMult[a.project] ?? 1) *
+      (PRICE_MODEL.qualityMult[a.quality] ?? 1) *
+      (PRICE_MODEL.bathMult[a.bath] ?? 1) *
+      (PRICE_MODEL.timeMult[a.time] ?? 1);
+
+    const net = baseNet * mult;
+
+    const split = PRICE_MODEL.split;
+    const items = [
+      { name: "Demontage / Montage / Installation im Bad", value: net * split.installation },
+      { name: "Fliesenarbeiten / Fliesen im Bad",          value: net * split.tiles },
+      { name: "Elektroarbeiten im Bad",                    value: net * split.electrical },
+      { name: "Malerarbeiten im Bad",                      value: net * split.painting },
+      { name: "Ausstattung im Bad",                        value: net * split.equipment }
+    ];
+
+    const gross = net * (1 + VAT);
+    return { net, gross, items };
   }
 
-  // ===========
-  // PRICE CALC
-  // ===========
-  function calcPrice(){
-    const m = multipliers(state);
-
-    let install = BASE.demontage_montage_installation * m.install;
-    let fliesen = BASE.fliesen * m.fliesen;
-    let elektro = BASE.elektro * m.elektro;
-    let maler = BASE.maler * m.maler;
-    let ausstattung = BASE.ausstattung * m.ausstattung;
-
-    // Rundung sinnvoll
-    install = Math.round(install * 100) / 100;
-    fliesen = Math.round(fliesen * 100) / 100;
-    elektro = Math.round(elektro * 100) / 100;
-    maler = Math.round(maler * 100) / 100;
-    ausstattung = Math.round(ausstattung * 100) / 100;
-
-    // Netto & MwSt
-    const netto = install + fliesen + elektro + maler + ausstattung;
-    const mwst = netto * 0.19;
-    const brutto = netto + mwst;
-
-    return { install, fliesen, elektro, maler, ausstattung, netto, mwst, brutto };
-  }
-
-  // ===========
-  // RENDER
-  // ===========
   function setProgress(){
-    const totalSteps = steps.length;
-    const visibleStep = Math.min(stepIndex + 1, totalSteps);
-    const pct = ((visibleStep - 1) / (totalSteps - 1)) * 100;
+    const totalSteps = 8;
+    const current = Math.min(state.stepIndex + 1, totalSteps);
+    elStep.textContent = `Schritt ${current} von ${totalSteps}`;
+    elBar.style.width = `${((current-1)/(totalSteps-1))*100}%`;
+  }
 
-    document.getElementById("progressBar").style.width = pct + "%";
-    document.getElementById("stepLabel").innerText = `Schritt ${visibleStep} von ${totalSteps}`;
+  function gridClassFor(columns){
+    if(columns === 2) return "cols-2";
+    if(columns === 3) return "cols-3";
+    if(columns === 4) return "cols-4";
+    return "";
   }
 
   function render(){
     setProgress();
 
-    const step = steps[stepIndex];
-    document.getElementById("questionTitle").innerText = step.title;
-    document.getElementById("questionHint").innerText = step.hint || "";
+    const step = steps[state.stepIndex];
+    elTitle.textContent = step.title;
 
-    const grid = document.getElementById("optionsGrid");
-    grid.innerHTML = "";
+    // Back-Button
+    elBack.disabled = state.stepIndex === 0;
+    elBack.style.opacity = elBack.disabled ? "0.45" : "1";
+    elBack.style.cursor = elBack.disabled ? "not-allowed" : "pointer";
 
-    // Back/Restart Buttons
-    const backBtn = document.getElementById("backBtn");
-    backBtn.disabled = (stepIndex === 0);
-
-    const restartBtn = document.getElementById("restartBtn");
-    restartBtn.style.display = (stepIndex === steps.length - 1) ? "inline-flex" : "none";
+    // Grid reset
+    elGrid.className = `grid ${gridClassFor(step.columns)}`.trim();
+    elGrid.innerHTML = "";
 
     if(step.key === "result"){
-      const p = calcPrice();
-
-      // Ergebnisblock
-      const box = document.createElement("div");
-      box.className = "resultBox";
-      box.innerHTML = `
-        <div class="resultHead">
-          <h3>Preisinformation</h3>
-          <div class="total">Summe Total (mit MwSt.): ${eur(p.brutto)}</div>
-        </div>
-        <div class="resultBody">
-          <div id="summaryContent">
-            Für die gewünschte Badausstattung können Sie ungefähr folgende Kosten einplanen. In der Regel setzt sich der Gesamtpreis für ein neues Badezimmer zu einem Drittel aus Material- und zu zwei Dritteln aus den Arbeitskosten zusammen.
-            <br><br>
-            Nehmen Sie gerne über den untenstehenden Link Kontakt zu uns auf, damit wir in einem persönlichen Gespräch weitere Fragen klären können.
-            <br><br>
-            <strong>Ihre Auswahl:</strong><br>
-            • ${labelFor("ownership", state.ownership)}<br>
-            • ${labelFor("project", state.project)}<br>
-            • ${labelFor("people", state.people)}<br>
-            • ${labelFor("quality", state.quality)}<br>
-            • ${labelFor("area", state.area)}<br>
-            • ${labelFor("tub", state.tub)}<br>
-            • ${labelFor("timing", state.timing)}<br>
-            <br>
-            <strong>Kostenaufstellung (ca.):</strong>
-          </div>
-
-          <table class="table" aria-label="Kostenaufstellung">
-            <tr><td>Demontage / Montage / Installation im Bad</td><td>${eur(p.install)}</td></tr>
-            <tr><td>Fliesenarbeiten / Fliesen im Bad</td><td>${eur(p.fliesen)}</td></tr>
-            <tr><td>Elektroarbeiten im Bad</td><td>${eur(p.elektro)}</td></tr>
-            <tr><td>Malerarbeiten im Bad</td><td>${eur(p.maler)}</td></tr>
-            <tr><td>Ausstattung im Bad</td><td>${eur(p.ausstattung)}</td></tr>
-          </table>
-
-          <div class="downloadRow">
-            <a class="btn primary linkBtn" href="${CONTACT_URL}" target="_blank" rel="noopener">
-              Zum Kontaktformular
-            </a>
-            <button class="btn secondary" onclick="downloadSummary()">
-              Informationen herunterladen
-            </button>
-          </div>
-        </div>
-      `;
-      grid.appendChild(box);
+      renderResult();
       return;
     }
 
-    // Options
+    const currentAnswer = state.answers[step.key];
+
     step.options.forEach(opt => {
-      const el = document.createElement("div");
-      el.className = "option";
+      const card = document.createElement("div");
+      card.className = "option" + (currentAnswer === opt.label ? " selected" : "");
+      card.tabIndex = 0;
 
-      // Selected state
-      const current = state[step.key];
-      if(current === opt.value) el.classList.add("selected");
+      const p1 = document.createElement("p");
+      p1.className = "optLabel";
+      p1.textContent = opt.label;
 
-      el.innerHTML = `
-        <div class="optTitle">${opt.label}</div>
-        ${opt.sub ? `<div class="optSub">${opt.sub}</div>` : ""}
-      `;
+      const p2 = document.createElement("p");
+      p2.className = "optDesc";
+      p2.textContent = opt.desc;
 
-      // ✅ Auto-Weiter: Klick = speichern & sofort next
-      el.addEventListener("click", () => {
-        state[step.key] = opt.value;
-        stepIndex = Math.min(stepIndex + 1, steps.length - 1);
-        render();
+      card.appendChild(p1);
+      card.appendChild(p2);
+
+      const pick = () => {
+        // markieren
+        state.answers[step.key] = opt.label;
+
+        // Selected-UI sofort zeigen
+        [...elGrid.querySelectorAll(".option")].forEach(x => x.classList.remove("selected"));
+        card.classList.add("selected");
+
+        // Auto-Weiter (kleine Verzögerung, damit der Effekt sichtbar ist)
+        window.setTimeout(() => {
+          state.stepIndex = Math.min(state.stepIndex + 1, steps.length - 1);
+          render();
+        }, 120);
+      };
+
+      card.addEventListener("click", pick);
+      card.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          pick();
+        }
       });
 
-      grid.appendChild(el);
+      elGrid.appendChild(card);
     });
   }
 
-  function labelFor(key, value){
-    const step = steps.find(s => s.key === key);
-    if(!step) return String(value);
-    const opt = step.options.find(o => o.value === value);
-    return opt ? opt.label : String(value);
+  function renderResult(){
+    const { net, gross, items } = compute();
+
+    const wrap = document.createElement("div");
+    wrap.innerHTML = `
+      <div class="resultTop">
+        <h3>Preisinformation</h3>
+        <div class="sumBox">
+          <div class="sum">Summe Total (mit MwSt.): ${formatEUR(gross)}</div>
+          <div class="small">Netto ca.: ${formatEUR(net)} · MwSt. 19%</div>
+        </div>
+      </div>
+
+      <p class="text">
+        Für die gewünschte Badausstattung können Sie ungefähr folgende Kosten einplanen.
+        In der Regel setzt sich der Gesamtpreis für ein neues Badezimmer zu etwa einem Drittel aus Material- und zu zwei Dritteln aus Arbeitskosten zusammen.
+      </p>
+
+      <p class="text">
+        Nehmen Sie gerne über den untenstehenden Link Kontakt auf, damit in einem Gespräch Details abgestimmt werden können.
+      </p>
+
+      <div class="split">
+        <div>
+          <strong style="color:rgba(255,255,255,0.92);">Ihre Auswahl:</strong>
+          <ul class="list">
+            <li>${state.answers.owner}</li>
+            <li>${state.answers.project}</li>
+            <li>${state.answers.people} Personen</li>
+            <li>${state.answers.quality}</li>
+            <li>${labelSize(state.answers.size)}</li>
+            <li>${state.answers.bath}</li>
+            <li>${state.answers.time}</li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color:rgba(255,255,255,0.92);">Kostenaufstellung (ca.)</strong>
+          <div class="table" id="costTable"></div>
+        </div>
+      </div>
+
+      <div class="footerRow" style="margin-top:16px;">
+        <button class="btn btnPrimary" id="contactBtn" type="button">Zum Kontaktformular</button>
+        <button class="btn" id="downloadBtn" type="button">Informationen herunterladen</button>
+      </div>
+    `;
+
+    elGrid.className = "grid";
+    elGrid.appendChild(wrap);
+
+    const table = wrap.querySelector("#costTable");
+    items.forEach(it => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `<span>${it.name}</span><strong>${formatEUR(it.value)}</strong>`;
+      table.appendChild(row);
+    });
+
+    // Kontakt: Zielwebseite
+    wrap.querySelector("#contactBtn").addEventListener("click", () => {
+      window.open("https://www.elitebau-hamburg.de/", "_blank", "noopener");
+    });
+
+    // Download: Text-Datei
+    wrap.querySelector("#downloadBtn").addEventListener("click", () => {
+      const lines = [];
+      lines.push("OSION Solution XR – Bad-Budgetrechner (unverbindlich)");
+      lines.push("");
+      lines.push("Auswahl:");
+      lines.push(`- ${state.answers.owner}`);
+      lines.push(`- ${state.answers.project}`);
+      lines.push(`- ${state.answers.people} Personen`);
+      lines.push(`- ${state.answers.quality}`);
+      lines.push(`- ${labelSize(state.answers.size)}`);
+      lines.push(`- ${state.answers.bath}`);
+      lines.push(`- ${state.answers.time}`);
+      lines.push("");
+      lines.push("Kostenaufstellung (netto ca.):");
+      items.forEach(it => lines.push(`- ${it.name}: ${formatEUR(it.value)}`));
+      lines.push("");
+      lines.push(`Summe netto ca.: ${formatEUR(net)}`);
+      lines.push(`Summe brutto (mit 19% MwSt.) ca.: ${formatEUR(gross)}`);
+      lines.push("");
+      lines.push("Hinweis: Unverbindliche Schätzung, keine Preisgarantie.");
+
+      const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bad-kostenschaetzung.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+    });
   }
 
-  function goBack(){
-    if(stepIndex === 0) return;
-    stepIndex--;
+  function labelSize(key){
+    if(key === "4-5") return "4–5 qm";
+    if(key === "5-7") return "5–7 qm";
+    if(key === "7-10") return "7–10 qm";
+    if(key === ">10") return "> 10 qm";
+    return key || "";
+  }
+
+  elBack.addEventListener("click", () => {
+    if(state.stepIndex === 0) return;
+    state.stepIndex = Math.max(0, state.stepIndex - 1);
     render();
-  }
+  });
 
-  function restart(){
-    stepIndex = 0;
-    Object.keys(state).forEach(k => state[k] = null);
-    render();
-  }
-
-  // ===========
-  // DOWNLOAD: TXT
-  // ===========
-  function downloadSummary(){
-    const p = calcPrice();
-    const lines = [
-      "Interaktiver Bad-Budgetrechner – OSION Solution XR",
-      "",
-      "Ihre Auswahl:",
-      `- ${labelFor("ownership", state.ownership)}`,
-      `- ${labelFor("project", state.project)}`,
-      `- ${labelFor("people", state.people)}`,
-      `- ${labelFor("quality", state.quality)}`,
-      `- ${labelFor("area", state.area)}`,
-      `- ${labelFor("tub", state.tub)}`,
-      `- ${labelFor("timing", state.timing)}`,
-      "",
-      "Kostenaufstellung (ca.):",
-      `Demontage / Montage / Installation: ${eur(p.install)}`,
-      `Fliesenarbeiten: ${eur(p.fliesen)}`,
-      `Elektroarbeiten: ${eur(p.elektro)}`,
-      `Malerarbeiten: ${eur(p.maler)}`,
-      `Ausstattung: ${eur(p.ausstattung)}`,
-      "",
-      `Summe netto: ${eur(p.netto)}`,
-      `MwSt. (19%): ${eur(p.mwst)}`,
-      `Summe brutto: ${eur(p.brutto)}`,
-      "",
-      "Hinweis: Unverbindliche Kostenschätzung. Keine Preisgarantie."
-    ];
-
-    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "Bad-Kalkulation_OSION.txt";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  }
-
-  // Init
+  // Start
   render();
+})();
 </script>
 </body>
 </html>

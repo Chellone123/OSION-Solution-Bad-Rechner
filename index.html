@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Bad-Budgetrechner | Powered by OSION Solution XR</title>
 
   <style>
@@ -10,50 +10,61 @@
       --osion-red:#b11217;
       --osion-red-dark:#8f0f14;
       --ink:#0b0b0f;
-      --muted:#5a5f6a;
-      --card:#ffffff;
-      --line:#e8e8ee;
-      --bg:#f6f7fb;
-      --shadow: 0 18px 50px rgba(0,0,0,.10);
-      --radius: 18px;
+      --muted:#6b7280;
+      --bg:#06060a;
+      --shadow: 0 26px 80px rgba(0,0,0,.45);
+      --radius: 22px;
+      --hero-bg: none;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      color: var(--ink);
-      background: radial-gradient(1200px 600px at 30% -10%, rgba(177,18,23,.10), transparent 60%),
-                  radial-gradient(1000px 500px at 90% 0%, rgba(143,15,20,.12), transparent 55%),
-                  var(--bg);
+      color: #eef2ff;
+      background:
+        radial-gradient(1100px 560px at 20% -10%, rgba(177,18,23,.22), transparent 60%),
+        radial-gradient(900px 520px at 95% 0%, rgba(143,15,20,.20), transparent 55%),
+        radial-gradient(900px 520px at 50% 110%, rgba(255,255,255,.07), transparent 55%),
+        var(--bg);
     }
 
-    .wrap{
-      max-width: 1040px;
-      margin: 34px auto;
-      padding: 0 16px;
-    }
+    .wrap{max-width:1080px;margin:34px auto;padding:0 16px;}
 
     .shell{
-      background: var(--card);
-      border: 1px solid rgba(0,0,0,.06);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
       overflow:hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
     }
 
     .hero{
-      height: 180px;
-      background-image: url("osion-header.png");
+      position:relative;
+      height: 220px;
+      background:#111;
+      background-image: var(--hero-bg);
       background-size: cover;
       background-position: center;
-      position: relative;
     }
 
-    .hero:after{
+    .hero::before{
       content:"";
       position:absolute; inset:0;
-      background: linear-gradient(90deg, rgba(0,0,0,.48) 0%, rgba(0,0,0,.12) 45%, rgba(0,0,0,.18) 100%);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.34) 55%, rgba(0,0,0,.60) 100%),
+        radial-gradient(600px 260px at 20% 30%, rgba(177,18,23,.30), transparent 65%),
+        radial-gradient(520px 240px at 78% 28%, rgba(143,15,20,.22), transparent 62%);
+      pointer-events:none;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.42) 100%);
       pointer-events:none;
     }
 
@@ -62,233 +73,175 @@
       height:100%;
       display:flex;
       align-items:flex-end;
+      justify-content:space-between;
+      gap: 14px;
       padding: 18px 22px;
-      gap: 12px;
       z-index:1;
-      color:#fff;
     }
 
-    .brand{
+    .left{
       display:flex;
-      flex-direction:column;
-      gap:4px;
-      line-height:1.1;
+      gap:14px;
+      align-items:flex-end;
+      max-width: 760px;
     }
 
-    .brand .kicker{
-      font-size:12px;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      opacity:.9;
-    }
-
-    .brand .title{
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:-.02em;
-    }
-
-    .content{
-      padding: 22px 22px 18px 22px;
-    }
-
-    .toprow{
+    .logo{
+      width:56px;
+      height:56px;
+      border-radius:14px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      margin-bottom: 14px;
-    }
-
-    .hint{
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .progress{
-      width: 280px;
-      height: 10px;
-      background: #eceef6;
-      border-radius: 999px;
+      justify-content:center;
       overflow:hidden;
-      border: 1px solid rgba(0,0,0,.05);
+      flex: 0 0 auto;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+    .logo img{
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
     }
 
-    .bar{
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #000 0%, var(--osion-red-dark) 55%, var(--osion-red) 100%);
-      transition: width .25s ease;
+    .brand{display:flex;flex-direction:column;gap:6px;line-height:1.05;}
+    .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.92;}
+    .title{font-size:30px;font-weight:950;letter-spacing:-.03em;text-shadow:0 12px 30px rgba(0,0,0,.55);}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+      color:#fff;
+      font-weight:850;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background: linear-gradient(135deg, var(--osion-red-dark), var(--osion-red));
+      box-shadow: 0 0 0 6px rgba(177,18,23,.15);
     }
 
-    .question{
-      font-size: 16px;
-      font-weight: 800;
-      margin: 10px 0 14px 0;
-      letter-spacing: -.01em;
-    }
+    .content{padding:18px 22px;background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+    .hint{color:rgba(255,255,255,.78);font-size:13px;}
+    .progress{width:320px;height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.14);}
+    .bar{height:100%;width:0%;background: linear-gradient(90deg, #000 0%, var(--osion-red-dark) 58%, var(--osion-red) 100%);transition: width .25s ease;}
 
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 14px;
-    }
-    @media (max-width: 720px){
+    .panel{margin-top:12px;border-radius:18px;background: rgba(255,255,255,.06);border: 1px solid rgba(255,255,255,.12);padding:16px;}
+    .question{font-size:16px;font-weight:900;margin:2px 0 14px 0;letter-spacing:-.01em;}
+
+    .grid{display:grid;grid-template-columns: repeat(2, minmax(0,1fr));gap:14px;}
+    .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
+    @media (max-width: 900px){ .grid.cols-3{grid-template-columns:1fr} }
+    @media (max-width: 760px){
       .grid{grid-template-columns:1fr}
       .progress{width:100%}
-      .hero{height:160px}
-    }
-    .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
-    @media (max-width: 900px){
-      .grid.cols-3{grid-template-columns:1fr}
+      .hero{height: 200px}
+      .title{font-size:24px}
     }
 
     .opt{
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px 14px;
-      background: #fff;
+      background: rgba(255,255,255,.92);
+      color: #0b0b0f;
+      border: 1px solid rgba(0,0,0,.08);
       cursor:pointer;
       transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
-      min-height: 78px;
+      min-height: 86px;
       display:flex;
       flex-direction:column;
       justify-content:center;
       gap: 6px;
-      position:relative;
       user-select:none;
+      position:relative;
+      overflow:hidden;
     }
-    .opt:hover{
-      transform: translateY(-1px);
-      border-color: rgba(177,18,23,.55);
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    .opt::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(320px 160px at 30% 0%, rgba(177,18,23,.18), transparent 55%);
+      opacity:0;
+      transition: opacity .16s ease;
+      pointer-events:none;
     }
-    .opt.active{
-      border-color: var(--osion-red);
-      box-shadow: 0 14px 30px rgba(177,18,23,.18);
-    }
-    .opt .label{
-      font-weight: 900;
-      letter-spacing: -.01em;
-    }
-    .opt .sub{
-      color: var(--muted);
-      font-size: 12px;
-      line-height:1.25;
-    }
+    .opt:hover{transform: translateY(-1px);box-shadow: 0 18px 40px rgba(0,0,0,.18);}
+    .opt:hover::before{opacity:1}
+    .opt.active{border-color: rgba(177,18,23,.85);box-shadow: 0 22px 52px rgba(177,18,23,.22);}
+    .opt .label{font-weight:950;letter-spacing:-.01em;font-size:14px;}
+    .opt .sub{color: rgba(11,11,15,.70);font-size:12px;line-height:1.25;}
 
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 12px;
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
-    }
-
-    .btn{
-      border:0;
-      padding: 11px 14px;
-      border-radius: 12px;
-      font-weight: 900;
-      cursor:pointer;
-    }
-    .btn.back{
-      background: #0f0f14;
-      color:#fff;
-    }
-    .btn.back:disabled{opacity:.35; cursor:not-allowed}
+    .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10);}
+    .btn{border:0;padding:11px 14px;border-radius:14px;font-weight:900;cursor:pointer;}
+    .btn.back{background: rgba(255,255,255,.12);border: 1px solid rgba(255,255,255,.16);color:#fff;backdrop-filter: blur(10px);}
+    .btn.back:disabled{opacity:.35;cursor:not-allowed}
+    .stepHint{color: rgba(255,255,255,.70);font-size: 12px;}
 
     .result{
-      background: #f3f4f8;
-      border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.92);
+      color:#0b0b0f;
+      border: 1px solid rgba(0,0,0,.08);
       padding: 16px;
     }
-    .result h3{margin:0 0 10px 0}
-    .rows{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    @media (max-width: 720px){ .rows{grid-template-columns:1fr} }
+    .result h3{margin:0 0 10px 0;font-weight:950}
+    .rows{display:grid;grid-template-columns: 1fr 1fr;gap:10px;margin-top:10px;}
+    @media (max-width: 760px){ .rows{grid-template-columns:1fr} }
+    .row{background: rgba(255,255,255,.86);border: 1px solid rgba(0,0,0,.08);border-radius: 14px;padding: 10px 12px;display:flex;justify-content:space-between;gap: 10px;font-size: 13px;}
+    .total{margin-top:12px;font-size:18px;font-weight:950;display:flex;justify-content:flex-end;}
 
-    .row{
-      background:#fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 12px;
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .total{
-      margin-top: 12px;
-      font-size: 18px;
-      font-weight: 950;
-      display:flex;
-      justify-content:flex-end;
-    }
-    .cta{
-      margin-top: 12px;
-      display:flex;
-      justify-content:flex-end;
-      gap: 10px;
-      flex-wrap:wrap;
-    }
-    .cta a{
-      text-decoration:none;
-      display:inline-block;
-      padding: 11px 14px;
-      border-radius: 12px;
-      font-weight: 900;
-    }
-    .cta .primary{
-      background: var(--osion-red);
-      color:#fff;
-    }
-    .cta .ghost{
-      background: #0f0f14;
-      color:#fff;
-    }
+    .cta{margin-top:12px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+    .cta a{text-decoration:none;display:inline-block;padding:11px 14px;border-radius:14px;font-weight:950;font-size:13px;}
+    .cta .primary{background: linear-gradient(135deg, var(--osion-red-dark), var(--osion-red));color:#fff;box-shadow: 0 18px 40px rgba(177,18,23,.25);}
+    .cta .ghost{background: rgba(15,15,20,.92);color:#fff;}
 
-    .footer{
-      padding: 0 22px 18px 22px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align:center;
-    }
+    .footer{padding:0 22px 18px 22px;color: rgba(255,255,255,.65);font-size: 12px;text-align:center;}
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="shell">
+    <div class="shell" id="shell">
+
       <div class="hero">
         <div class="hero-inner">
-          <div class="brand">
-            <div class="kicker">Powered by OSION Solution XR</div>
-            <div class="title">Interaktiver Bad-Budgetrechner</div>
+          <div class="left">
+            <div class="logo">
+              <img id="osionLogo" alt="OSION Solution XR" />
+            </div>
+            <div class="brand">
+              <div class="kicker">Powered by OSION Solution XR</div>
+              <div class="title">Interaktiver Bad-Budgetrechner</div>
+            </div>
           </div>
+          <div class="badge"><span class="dot"></span><span>Unverbindlich</span></div>
         </div>
       </div>
 
       <div class="content">
         <div class="toprow">
           <div class="hint">Unverbindliche Kostenschätzung auf Basis deiner Auswahl.</div>
-          <div class="progress" aria-label="Fortschritt">
-            <div class="bar" id="bar"></div>
-          </div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
         </div>
 
-        <div id="app"></div>
+        <div class="panel">
+          <div id="app"></div>
 
-        <div class="nav">
-          <button class="btn back" id="backBtn" type="button">Zurück</button>
-          <div class="hint" id="stepHint"></div>
+          <div class="nav">
+            <button class="btn back" id="backBtn" type="button">Zurück</button>
+            <div class="stepHint" id="stepHint"></div>
+          </div>
         </div>
       </div>
 
@@ -300,7 +253,26 @@
 
 <script>
 (() => {
-  // Preise: realistische Mittelklasse als Basis, Netto. MwSt. wird am Ende addiert.
+  // =========================
+  // ASSETS / LINKS (HIER passt du nur Dateinamen/Link an)
+  // =========================
+
+  // Das ist DEIN aktueller Dateiname im Repo – mit %20 für Leerzeichen:
+  const OSION_LOGO_FILE = "MGU-0015%20Logo%20OSION%20Solution%20XR.png";
+
+  // Header-Hintergrund: wir nutzen einfach das gleiche Bild wie Hintergrund (du kannst später ein anderes nehmen)
+  const HEADER_BG_FILE = OSION_LOGO_FILE;
+
+  // Optional: Kontakt-Link (wenn leer, kein Kontaktbutton)
+  const CONTACT_URL = ""; // z.B. "https://kunde.de/kontakt"
+
+  // Assets anwenden
+  document.getElementById("shell").style.setProperty("--hero-bg", `url("${HEADER_BG_FILE}")`);
+  document.getElementById("osionLogo").src = OSION_LOGO_FILE;
+
+  // =========================
+  // PREISE / LOGIK
+  // =========================
   const VAT = 0.19;
 
   const PRICES = {
@@ -419,7 +391,9 @@
       app.innerHTML = `
         <div class="result">
           <h3>Preisinformation</h3>
-          <div class="hint">Orientierungswerte auf Basis deiner Auswahl.</div>
+          <div style="color:rgba(11,11,15,.70);font-size:13px;line-height:1.35">
+            Orientierungswerte auf Basis deiner Auswahl.
+          </div>
 
           <div class="rows">
             ${Object.entries(parts).map(([k,v]) => `
@@ -432,7 +406,8 @@
 
           <div class="cta">
             <a class="ghost" href="${mailHref}">Ergebnis per E-Mail</a>
-            <a class="primary" href="#" id="copyBtn">Ergebnis kopieren</a>
+            <a class="ghost" href="#" id="copyBtn">Ergebnis kopieren</a>
+            ${CONTACT_URL ? `<a class="primary" href="${CONTACT_URL}" target="_blank" rel="noopener">Zum Kontaktformular</a>` : ``}
           </div>
         </div>
       `;
@@ -469,15 +444,13 @@
 
     function pick(val){
       state[s.key] = val;
-
-      // UI update
       app.querySelectorAll(".opt").forEach(el => el.classList.toggle("active", el.dataset.val === val));
 
-      // Auto-Weiter (ohne extra Button)
+      // Auto-Weiter
       window.setTimeout(() => {
         idx = Math.min(idx + 1, steps.length - 1);
         render();
-      }, 180);
+      }, 140);
     }
 
     app.querySelectorAll(".opt").forEach(el => {

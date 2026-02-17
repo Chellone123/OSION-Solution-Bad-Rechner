@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Interaktiver Bad-Budgetrechner | Powered by OSION Solution XR</title>
 
   <style>
@@ -22,6 +22,9 @@
       --accent1:#b3003c;
       --accent2:#6b2cff;
       --accentGlow: 0 0 0 2px rgba(179,0,60,.35), 0 0 40px rgba(107,44,255,.25), 0 0 90px rgba(179,0,60,.18);
+
+      --easeOut: cubic-bezier(.2,.9,.2,1);
+      --pressScale: .985;
     }
 
     *{ box-sizing:border-box; }
@@ -44,6 +47,7 @@
       align-items:center;
       justify-content:center;
       padding:46px 18px;
+      padding-bottom: calc(46px + env(safe-area-inset-bottom, 0px));
     }
 
     .shell{
@@ -85,6 +89,7 @@
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow2);
       max-width:100%;
+      min-width:0;
     }
 
     .brandBadge img{
@@ -95,6 +100,7 @@
       border: 1px solid rgba(255,255,255,.16);
       padding:6px;
       object-fit:contain;
+      flex:0 0 auto;
     }
 
     .brandText{
@@ -173,6 +179,7 @@
       width:0%;
       background: linear-gradient(90deg, rgba(107,44,255,.95), rgba(179,0,60,.95));
       box-shadow: 0 0 30px rgba(179,0,60,.25);
+      transition: width 420ms var(--easeOut);
     }
     .stepLabel{
       font-size:12px;
@@ -188,6 +195,7 @@
         radial-gradient(900px 340px at 10% 30%, rgba(107,44,255,.10), transparent 55%),
         radial-gradient(900px 340px at 90% 40%, rgba(179,0,60,.10), transparent 55%),
         linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.60));
+      padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
     }
 
     .panel{
@@ -228,6 +236,7 @@
 
     .panelBody{
       padding:16px 18px 18px 18px;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
     }
 
     /* OPTION GRID */
@@ -241,14 +250,52 @@
     @media (max-width: 980px){
       .grid.cols-3{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
+
+    /* Mobile: Header sauber umbrechen (wie bei deinem Screenshot) */
     @media (max-width: 680px){
       .grid.cols-2, .grid.cols-3{ grid-template-columns: 1fr; }
-      .title{ font-size:22px; }
-      .hero{ min-height: 170px; }
+
+      .hero{ min-height: 170px; padding:18px 18px 14px 18px; }
+
+      .brandRow{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .brandBadge{
+        width: 100%;
+        border-radius: 20px;
+      }
+      .brandBadge img{
+        width:56px;
+        height:56px;
+      }
+      .kicker{
+        white-space: normal;
+        letter-spacing: .14em;
+        line-height: 1.15;
+      }
+      .title{
+        white-space: normal;
+        font-size: 20px;
+        line-height: 1.18;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
       .pill{ margin-left:0; }
-      .progressWrap{ justify-content:flex-start; }
+
+      .progressWrap{
+        justify-content:flex-start;
+        min-width: 0;
+        width: 100%;
+      }
+      .stepLabel{
+        white-space: normal;
+      }
     }
 
+    /* Options */
     .opt{
       position:relative;
       border-radius: 22px;
@@ -260,7 +307,7 @@
       box-shadow: 0 18px 55px rgba(0,0,0,.35);
       padding:18px 18px;
       cursor:pointer;
-      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, filter .15s ease;
+      transition: transform 220ms var(--easeOut), border-color 220ms var(--easeOut), box-shadow 220ms var(--easeOut), filter 220ms var(--easeOut);
       min-height: 88px;
       display:flex;
       align-items:center;
@@ -268,30 +315,50 @@
       gap:14px;
       outline:none;
       user-select:none;
+      overflow:hidden;
+      transform: translateZ(0);
+      will-change: transform, box-shadow;
+    }
+    .opt::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: 24px;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity 240ms var(--easeOut);
+      box-shadow: var(--accentGlow);
     }
     .opt:hover{
       transform: translateY(-1px);
       border-color: rgba(255,255,255,.22);
       filter: brightness(1.03);
     }
-    .opt[aria-selected="true"]{
-      border-color: rgba(179,0,60,.60);
-      box-shadow: var(--accentGlow);
+    .opt:active{
+      transform: translateY(0) scale(var(--pressScale));
     }
+    .opt.isSelected{
+      border-color: rgba(255,255,255,.26);
+      filter: brightness(1.05);
+    }
+    .opt.isSelected::after{ opacity:1; }
 
     .optText{
       display:flex;
-      align-items:baseline;
-      gap:10px;
-      flex-wrap:wrap;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:6px;
       min-width:0;
+      flex:1 1 auto;
     }
     .optMain{
       font-size:18px;
-      font-weight:850;
+      font-weight:900;
       color: rgba(255,255,255,.96);
-      line-height:1.1;
-      white-space:nowrap;
+      line-height:1.15;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      max-width:100%;
     }
 
     .chev{
@@ -303,7 +370,9 @@
       background: rgba(0,0,0,.18);
       color: rgba(255,255,255,.92);
       flex:0 0 auto;
+      transition: transform 240ms var(--easeOut), background 240ms var(--easeOut);
     }
+    .opt:hover .chev{ transform: translateX(1px); }
     .chev svg{ width:18px;height:18px; opacity:.95; }
 
     .panelFoot{
@@ -327,15 +396,20 @@
       color: rgba(255,255,255,.95);
       background: rgba(255,255,255,.12);
       border: 1px solid rgba(255,255,255,.14);
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      transition: transform 220ms var(--easeOut), background 220ms var(--easeOut), border-color 220ms var(--easeOut), box-shadow 220ms var(--easeOut);
       display:flex;
       align-items:center;
       gap:10px;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .btn:hover{
       transform: translateY(-1px);
       background: rgba(255,255,255,.14);
       border-color: rgba(255,255,255,.20);
+    }
+    .btn:active{
+      transform: translateY(0) scale(var(--pressScale));
     }
     .btn:disabled{
       opacity:.45;
@@ -349,6 +423,7 @@
     }
     .btnPrimary:hover{
       background: linear-gradient(90deg, rgba(107,44,255,1), rgba(179,0,60,1));
+      box-shadow: 0 18px 55px rgba(179,0,60,.26);
     }
 
     .meta{
@@ -364,6 +439,7 @@
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       padding:16px 16px;
+      margin-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     }
     .resultHead{
       display:flex;
@@ -416,8 +492,8 @@
       padding: 12px 10px 18px;
       font-size:12px;
       color: rgba(255,255,255,.62);
+      padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
     }
-    a{ color: rgba(255,255,255,.92); }
 
     /* ===== AREA CUSTOM (Slider-Block) ===== */
     .customBox{
@@ -451,6 +527,7 @@
       color: rgba(255,255,255,.92);
       white-space:nowrap;
     }
+
     .sliders{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -460,11 +537,18 @@
     @media (max-width: 980px){
       .sliders{ grid-template-columns: 1fr; }
     }
+
     .sItem{
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       padding:12px 12px;
+      transition: transform 220ms var(--easeOut), border-color 220ms var(--easeOut), box-shadow 220ms var(--easeOut);
+    }
+    .sItem:focus-within{
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10), 0 18px 55px rgba(0,0,0,.28);
+      transform: translateY(-1px);
     }
     .sLabel{
       display:flex;
@@ -480,11 +564,53 @@
       color: rgba(255,255,255,.95);
       font-weight:950;
       white-space:nowrap;
+      transition: transform 220ms var(--easeOut);
     }
+    .sItem.isAdjusting .sValue{ transform: scale(1.03); }
+
     input[type="range"]{
       width:100%;
-      accent-color: var(--accent2);
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 999px;
+      outline: none;
+      background:
+        linear-gradient(90deg, rgba(107,44,255,.95), rgba(179,0,60,.95)) 0/ var(--fill, 50%) 100% no-repeat,
+        rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: background-size 240ms var(--easeOut), filter 240ms var(--easeOut);
     }
+    input[type="range"]:hover{ filter: brightness(1.04); }
+    input[type="range"]::-webkit-slider-thumb{
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      border: 2px solid rgba(0,0,0,.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      transition: transform 180ms var(--easeOut), box-shadow 180ms var(--easeOut);
+    }
+    input[type="range"]:active::-webkit-slider-thumb{
+      transform: scale(1.12);
+      box-shadow: 0 14px 44px rgba(0,0,0,.45);
+    }
+    input[type="range"]::-moz-range-thumb{
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      border: 2px solid rgba(0,0,0,.25);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      transition: transform 180ms var(--easeOut), box-shadow 180ms var(--easeOut);
+    }
+    input[type="range"]:active::-moz-range-thumb{
+      transform: scale(1.12);
+      box-shadow: 0 14px 44px rgba(0,0,0,.45);
+    }
+
     .applyRow{
       display:flex;
       gap:12px;
@@ -493,11 +619,145 @@
       align-items:center;
       justify-content:flex-end;
     }
-    .miniHint{
-      font-size:12px;
-      color: rgba(255,255,255,.72);
-      margin:10px 0 0 0;
+
+    /* Step / Content Animations */
+    .fadeIn{ animation: fadeInUp 380ms var(--easeOut) both; }
+    @keyframes fadeInUp{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform: translateY(0);} }
+    .pulse{ animation: pulseGlow 520ms var(--easeOut) both; }
+    @keyframes pulseGlow{
+      0%{ transform: translateY(0); filter: brightness(1); }
+      45%{ transform: translateY(-1px); filter: brightness(1.06); }
+      100%{ transform: translateY(0); filter: brightness(1); }
+    }
+
+    /* Modal */
+    .modalOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 22px 16px;
+      z-index: 9999;
+    }
+    .modalOverlay.isOpen{ display:flex; }
+
+    .modalCard{
+      width: min(760px, 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.16);
+      background:
+        radial-gradient(900px 420px at 10% 20%, rgba(107,44,255,.16), transparent 60%),
+        radial-gradient(900px 420px at 90% 20%, rgba(179,0,60,.14), transparent 60%),
+        rgba(10,10,14,.88);
+      box-shadow: 0 40px 120px rgba(0,0,0,.65);
+      overflow:hidden;
+      transform: translateY(8px) scale(.98);
+      opacity:0;
+      animation: modalIn 360ms var(--easeOut) forwards;
+    }
+    @keyframes modalIn{ to{ transform: translateY(0) scale(1); opacity:1; } }
+
+    .modalHead{
+      padding:18px 18px 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modalTitle{
+      margin:0;
+      font-size:18px;
+      font-weight:950;
+      line-height:1.2;
+    }
+    .modalSub{
+      margin:6px 0 0 0;
+      color: rgba(255,255,255,.76);
+      font-size:13px;
       line-height:1.35;
+    }
+    .modalClose{
+      width:40px;height:40px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.92);
+    }
+
+    .modalBody{ padding: 14px 18px 18px 18px; }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (max-width: 680px){
+      .formGrid{ grid-template-columns: 1fr; }
+    }
+    .field{ display:flex; flex-direction:column; gap:8px; }
+    .label{
+      font-size:12px;
+      font-weight:850;
+      color: rgba(255,255,255,.84);
+    }
+    .input{
+      width:100%;
+      border-radius: 14px;
+      padding: 12px 12px;
+      color: rgba(255,255,255,.94);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      outline:none;
+      transition: border-color 220ms var(--easeOut), box-shadow 220ms var(--easeOut), transform 220ms var(--easeOut);
+    }
+    .input:focus{
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10), 0 0 0 6px rgba(179,0,60,.10);
+      transform: translateY(-1px);
+    }
+
+    .checkRow{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color: rgba(255,255,255,.82);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .checkRow input{
+      margin-top:3px;
+      width:18px;height:18px;
+      accent-color: var(--accent2);
+    }
+
+    .formFoot{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+
+    .errorText{
+      font-size:12px;
+      color: rgba(255,107,107,.95);
+      font-weight:850;
+      display:none;
+      margin-top:10px;
+    }
+    .errorText.isOpen{ display:block; }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+      .modalCard{ opacity:1; transform:none; }
     }
   </style>
 </head>
@@ -524,7 +784,7 @@
 
         <div class="subRow">
           <div class="subText">
-            Unverbindliche Kostenschätzung auf Basis Ihrer Auswahl. Keine Preisgarantie.
+            Unverbindliche Kostenschätzung auf Basis der Auswahl. Keine Preisgarantie.
           </div>
           <div class="progressWrap">
             <div class="progressBar" aria-hidden="true">
@@ -540,7 +800,7 @@
           <div class="panelHead">
             <div class="qWrap">
               <h2 class="question" id="question">…</h2>
-              <p class="hint" id="hint">Bitte wählen Sie eine Option.</p>
+              <p class="hint" id="hint">Bitte eine Option wählen.</p>
             </div>
             <div class="meta" id="metaRight"> </div>
           </div>
@@ -557,30 +817,30 @@
                 </div>
 
                 <p class="hint" style="margin:0; color:rgba(255,255,255,.78);">
-                  Wenn Sie die exakten Maße kennen, können Sie Länge, Breite und Höhe einstellen.
+                  Wenn die Maße bekannt sind: Länge, Breite und Höhe einstellen. Danach übernehmen.
                 </p>
 
                 <div class="sliders">
-                  <div class="sItem">
+                  <div class="sItem" id="lenItem">
                     <div class="sLabel">
                       <span>Länge</span>
-                      <span class="sValue" id="lenVal">3.0 m</span>
+                      <span class="sValue" id="lenVal">3,0 m</span>
                     </div>
                     <input id="lenRange" type="range" min="1.0" max="6.0" step="0.1" value="3.0" />
                   </div>
 
-                  <div class="sItem">
+                  <div class="sItem" id="widItem">
                     <div class="sLabel">
                       <span>Breite</span>
-                      <span class="sValue" id="widVal">2.0 m</span>
+                      <span class="sValue" id="widVal">2,0 m</span>
                     </div>
                     <input id="widRange" type="range" min="1.0" max="5.0" step="0.1" value="2.0" />
                   </div>
 
-                  <div class="sItem">
+                  <div class="sItem" id="heiItem">
                     <div class="sLabel">
                       <span>Höhe</span>
-                      <span class="sValue" id="heiVal">2.4 m</span>
+                      <span class="sValue" id="heiVal">2,4 m</span>
                     </div>
                     <input id="heiRange" type="range" min="2.0" max="3.2" step="0.1" value="2.4" />
                   </div>
@@ -593,12 +853,13 @@
                   </button>
                 </div>
 
-                <p class="miniHint">
-                  Hinweis: Es handelt sich um eine unverbindliche Kostenschätzung. Die tatsächlichen Kosten können je nach Zustand vor Ort abweichen.
+                <p class="note" style="margin-top:10px">
+                  Hinweis: Unverbindliche Kostenschätzung. Abweichungen durch Zustand vor Ort möglich.
                 </p>
               </div>
             </div>
 
+            <!-- Ergebnis -->
             <div id="result" style="display:none; margin-top:16px;">
               <div class="resultBox">
                 <div class="resultHead">
@@ -607,44 +868,28 @@
                 </div>
 
                 <p class="hint" style="margin:0 0 8px 0; color:rgba(255,255,255,.78);">
-                  Unverbindliche Kostenschätzung auf Basis Ihrer Auswahl. Die Berechnung dient als Orientierung und ersetzt keine Vor-Ort-Besichtigung.
+                  Orientierung auf Basis der Auswahl. Ergebnis ersetzt keine Vor-Ort-Besichtigung.
                 </p>
 
                 <table class="table" aria-label="Kostenaufteilung">
                   <tbody>
-                    <tr>
-                      <td>Demontage / Montagearbeiten / Installation im Bad</td>
-                      <td id="cInstall">–</td>
-                    </tr>
-                    <tr>
-                      <td>Fliesenarbeiten / Fliesen im Bad</td>
-                      <td id="cTiles">–</td>
-                    </tr>
-                    <tr>
-                      <td>Malerarbeiten im Bad</td>
-                      <td id="cPaint">–</td>
-                    </tr>
-                    <tr>
-                      <td>Elektroarbeiten im Bad</td>
-                      <td id="cElec">–</td>
-                    </tr>
-                    <tr>
-                      <td>Ausstattung im Bad</td>
-                      <td id="cEquip">–</td>
-                    </tr>
+                    <tr><td>Demontage / Montage / Installation</td><td id="cInstall">–</td></tr>
+                    <tr><td>Fliesenarbeiten</td><td id="cTiles">–</td></tr>
+                    <tr><td>Malerarbeiten</td><td id="cPaint">–</td></tr>
+                    <tr><td>Elektroarbeiten</td><td id="cElec">–</td></tr>
+                    <tr><td>Ausstattung</td><td id="cEquip">–</td></tr>
                   </tbody>
                 </table>
 
-                <!-- CTA: NUR EIN BUTTON, wie gewünscht -->
                 <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
-                  <a class="btn btnPrimary" id="ctaLink" href="https://elitebau-hamburg.de/kontakt" target="_blank" rel="noopener">
+                  <button class="btn btnPrimary" id="ctaOpen" type="button">
                     Kostenlose Vor-Ort-Einschätzung anfragen
                     <span aria-hidden="true">↗</span>
-                  </a>
+                  </button>
                 </div>
 
                 <div class="note">
-                  Unverbindliche Kostenschätzung. Keine Preisgarantie. Abweichungen sind durch Zustand vor Ort, Leitungen, Untergrund und Elektro möglich.
+                  Unverbindliche Kostenschätzung. Keine Preisgarantie. Abweichungen sind durch Leitungen, Untergrund, Elektro und Umfang möglich.
                 </div>
               </div>
             </div>
@@ -666,35 +911,77 @@
     </div>
   </div>
 
+  <!-- Modal (Kontaktaufnahme) -->
+  <div class="modalOverlay" id="modalOverlay" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHead">
+        <div>
+          <h3 class="modalTitle" id="modalTitle">Anfrage für eine Vor-Ort-Einschätzung</h3>
+          <p class="modalSub">
+            Angaben werden in eine vorbefüllte E-Mail übernommen – inklusive Ergebnis und Auswahlübersicht.
+          </p>
+        </div>
+        <button class="modalClose btn" type="button" id="modalClose" aria-label="Schließen">✕</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="formGrid">
+          <div class="field">
+            <div class="label">Name*</div>
+            <input class="input" id="leadName" type="text" autocomplete="name" placeholder="Vor- und Nachname" />
+          </div>
+          <div class="field">
+            <div class="label">E-Mail*</div>
+            <input class="input" id="leadEmail" type="email" autocomplete="email" placeholder="name@beispiel.de" />
+          </div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <div class="label">Telefon (optional)</div>
+            <input class="input" id="leadPhone" type="tel" autocomplete="tel" placeholder="+49 …" />
+          </div>
+        </div>
+
+        <div class="checkRow">
+          <input id="leadConsent" type="checkbox" />
+          <label for="leadConsent">
+            Einwilligung zur Verarbeitung der Angaben zum Zweck der Kontaktaufnahme.*
+          </label>
+        </div>
+
+        <div class="errorText" id="leadError">Bitte Name, E-Mail und Einwilligung vollständig angeben.</div>
+
+        <div class="formFoot">
+          <button class="btn" type="button" id="modalCancel">Abbrechen</button>
+          <button class="btn btnPrimary" type="button" id="leadSend">
+            Anfrage vorbereiten
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Empfängeradresse anpassen
+    const LEAD_TO_EMAIL = "info@elitebau-hamburg.de";
+
     // =========================
-    // 1) Daten / Schritte
+    // Schritte (Ownership entfernt)
     // =========================
     const steps = [
       {
-        id: "ownership",
-        question: "Sind Sie Eigentümer oder Mieter?",
-        hint: "Bitte wählen Sie eine Option.",
-        grid: "cols-2",
-        options: [
-          { value: "owner", label: "Eigentümer", score: 0.00 },
-          { value: "renter", label: "Mieter", score: 0.08 }
-        ]
-      },
-      {
         id: "projectType",
         question: "Planen Sie eine Badezimmersanierung oder einen Neubau?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-2",
         options: [
           { value: "renovation", label: "Sanierung", score: 0.00 },
-          { value: "newBuild", label: "Neubau", score: 0.22 }
+          { value: "newBuild",   label: "Neubau",    score: 0.22 }
         ]
       },
       {
         id: "persons",
         question: "Wie viele Personen leben im Haushalt?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-2",
         options: [
           { value: 1, label: "1 Person", score: 0.00 },
@@ -705,44 +992,41 @@
       },
       {
         id: "quality",
-        question: "In welcher Qualität soll Ihr Bad ausgestattet werden?",
-        hint: "Bitte wählen Sie eine Option.",
+        question: "In welcher Qualität soll das Bad ausgestattet werden?",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
-          { value: "basic", label: "Basic", score: 0.00 },
+          { value: "basic",   label: "Basic",   score: 0.00 },
           { value: "comfort", label: "Komfort", score: 0.22 },
-          { value: "luxury", label: "Luxus", score: 0.42 }
+          { value: "luxury",  label: "Luxus",   score: 0.42 }
         ]
       },
       {
-        // Presets + optionale individuelle Maße (Slider)
         id: "area",
-        question: "Wie groß ist die Grundfläche Ihres Bades?",
-        hint: "Wählen Sie eine Größe oder nutzen Sie die individuellen Maße.",
+        question: "Wie groß ist die Grundfläche des Bades?",
+        hint: "Größe wählen oder individuell einstellen.",
         grid: "cols-3",
         options: [
-          { value: "small", label: "Klein (ca. 5 qm)", scoreNorm: 0.12, add: 0, dims: { area: 5.0, height: 2.4 } },
-          { value: "mid",   label: "Mittel (ca. 8 qm)", scoreNorm: 0.44, add: 0, dims: { area: 8.0, height: 2.4 } },
-          { value: "large", label: "Groß (ca. 13 qm)", scoreNorm: 1.00, add: 0, dims: { area: 13.0, height: 2.4 } }
+          { value: "small", label: "Klein (ca. 5 qm)",   scoreNorm: 0.12, add: 0, dims: { area: 5.0,  height: 2.4 } },
+          { value: "mid",   label: "Mittel (ca. 8 qm)",  scoreNorm: 0.44, add: 0, dims: { area: 8.0,  height: 2.4 } },
+          { value: "large", label: "Groß (ca. 13 qm)",   scoreNorm: 1.00, add: 0, dims: { area: 13.0, height: 2.4 } }
         ]
       },
       {
         id: "showerBath",
-        question: "Möchten Sie Ihr Badezimmer mit einer Dusche und/oder einer Badewanne ausstatten?",
-        hint: "Bitte wählen Sie eine Option.",
+        question: "Soll das Bad eine Dusche und/oder eine Badewanne enthalten?",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "shower", label: "Dusche", score: 0.00 },
-          { value: "bath", label: "Badewanne", score: 0.10 },
-          { value: "both", label: "Dusche und Badewanne", score: 0.18 }
+          { value: "bath",   label: "Badewanne", score: 0.10 },
+          { value: "both",   label: "Dusche und Badewanne", score: 0.18 }
         ]
       },
-
-      // Erweiterungen
       {
         id: "floor",
         question: "Welcher Bodenbelag ist geplant?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "tile",  label: "Fliese",    score: 0.20, add: 1200 },
@@ -753,7 +1037,7 @@
       {
         id: "walls",
         question: "Wie sollen die Wände ausgeführt werden?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "paint",    label: "Gestrichen",    score: 0.05, add: 250  },
@@ -764,7 +1048,7 @@
       {
         id: "wcType",
         question: "Welcher WC-Typ ist geplant?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-2",
         options: [
           { value: "standard", label: "WC",       score: 0.10, add: 450  },
@@ -774,7 +1058,7 @@
       {
         id: "washplace",
         question: "Welche Waschplatz-Lösung ist geplant?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "small",  label: "Handwaschbecken",  score: 0.06, add: 350  },
@@ -785,7 +1069,7 @@
       {
         id: "heating",
         question: "Welche Heizlösung ist geplant?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "radiator", label: "Heizkörper",      score: 0.10, add: 550  },
@@ -796,7 +1080,7 @@
       {
         id: "lighting",
         question: "Welche Beleuchtung ist geplant?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
           { value: "ceiling", label: "Deckenlicht",     score: 0.08, add: 250  },
@@ -804,93 +1088,71 @@
           { value: "ambient", label: "Ambient + Spots", score: 0.22, add: 1100 }
         ]
       },
-
       {
         id: "timing",
         question: "Zeitpunkt der Ausführung?",
-        hint: "Bitte wählen Sie eine Option.",
+        hint: "Bitte eine Option wählen.",
         grid: "cols-3",
         options: [
-          { value: "1-3", label: "1–3 Monate", score: 0.26 },
-          { value: "3-6", label: "3–6 Monate", score: 0.14 },
-          { value: "later", label: "Später", score: 0.00 }
+          { value: "1-3",   label: "1–3 Monate", score: 0.26 },
+          { value: "3-6",   label: "3–6 Monate", score: 0.14 },
+          { value: "later", label: "Später",     score: 0.00 }
         ]
       },
-
-      // Ergebnis
-      {
-        id: "result",
-        question: "Preisinformation",
-        hint: "Hier sehen Sie das Ergebnis.",
-        grid: "cols-2",
-        options: []
-      }
+      { id:"result", question:"Preisinformation", hint:"Hier steht das Ergebnis.", grid:"cols-2", options:[] }
     ];
 
     // =========================
-    // 2) Preislogik
+    // Preislogik (deine Werte)
     // =========================
     const PRICE_MIN = 15664.54;
     const PRICE_MAX = 39032.94;
 
     const weights = {
-      ownership:   0.06,
       projectType: 0.14,
       persons:     0.09,
       quality:     0.20,
       area:        0.18,
       showerBath:  0.06,
-
       floor:       0.06,
       walls:       0.08,
       wcType:      0.05,
       washplace:   0.06,
       heating:     0.04,
       lighting:    0.02,
-
       timing:      0.06
     };
 
-    // Kostenaufteilung (Summe = 1.00)
-    const split = {
-      install: 0.23,
-      tiles:   0.16,
-      paint:   0.08,
-      elec:    0.07,
-      equip:   0.46
-    };
+    const split = { install:0.23, tiles:0.16, paint:0.08, elec:0.07, equip:0.46 };
 
-    // Fläche-Normierung für Slider
     const AREA_MIN = 4.0;
     const AREA_MAX = 13.0;
     const HEIGHT_REF = 2.4;
 
     // =========================
-    // 3) State / UI
+    // State / UI
     // =========================
-    const state = {
-      stepIndex: 0,
-      answers: {}
-    };
+    const state = { stepIndex:0, answers:{} };
 
-    const elQuestion = document.getElementById("question");
-    const elHint = document.getElementById("hint");
-    const elOptions = document.getElementById("options");
-    const elBack = document.getElementById("backBtn");
-    const elProgress = document.getElementById("progressFill");
-    const elStepLabel = document.getElementById("stepLabel");
+    const elQuestion   = document.getElementById("question");
+    const elHint       = document.getElementById("hint");
+    const elOptions    = document.getElementById("options");
+    const elBack       = document.getElementById("backBtn");
+    const elProgress   = document.getElementById("progressFill");
+    const elStepLabel  = document.getElementById("stepLabel");
     const elFooterMeta = document.getElementById("footerMeta");
-    const elMetaRight = document.getElementById("metaRight");
+    const elMetaRight  = document.getElementById("metaRight");
 
     const elResultWrap = document.getElementById("result");
-    const elTotalOut = document.getElementById("totalOut");
-    const elCInstall = document.getElementById("cInstall");
-    const elCTiles = document.getElementById("cTiles");
-    const elCPaint = document.getElementById("cPaint");
-    const elCElec = document.getElementById("cElec");
-    const elCEquip = document.getElementById("cEquip");
+    const elTotalOut   = document.getElementById("totalOut");
+    const elCInstall   = document.getElementById("cInstall");
+    const elCTiles     = document.getElementById("cTiles");
+    const elCPaint     = document.getElementById("cPaint");
+    const elCElec      = document.getElementById("cElec");
+    const elCEquip     = document.getElementById("cEquip");
+    const elCtaOpen    = document.getElementById("ctaOpen");
 
-    // Area custom UI
+    // Area custom
     const elAreaCustomWrap = document.getElementById("areaCustomWrap");
     const elLen = document.getElementById("lenRange");
     const elWid = document.getElementById("widRange");
@@ -901,12 +1163,45 @@
     const elAreaLive = document.getElementById("areaLive");
     const elApplyAreaBtn = document.getElementById("applyAreaBtn");
 
-    function euro(n){
-      return new Intl.NumberFormat("de-DE", { style:"currency", currency:"EUR" }).format(n);
-    }
+    const elLenItem = document.getElementById("lenItem");
+    const elWidItem = document.getElementById("widItem");
+    const elHeiItem = document.getElementById("heiItem");
+
+    // Modal
+    const elModalOverlay = document.getElementById("modalOverlay");
+    const elModalClose   = document.getElementById("modalClose");
+    const elModalCancel  = document.getElementById("modalCancel");
+    const elLeadName     = document.getElementById("leadName");
+    const elLeadEmail    = document.getElementById("leadEmail");
+    const elLeadPhone    = document.getElementById("leadPhone");
+    const elLeadConsent  = document.getElementById("leadConsent");
+    const elLeadSend     = document.getElementById("leadSend");
+    const elLeadError    = document.getElementById("leadError");
+
+    function euro(n){ return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(n); }
     function clamp01(x){ return Math.min(1, Math.max(0, x)); }
     function to1(n){ return Math.round(n * 10) / 10; }
     function to2(n){ return Math.round(n * 100) / 100; }
+
+    function triggerFade(el){
+      el.classList.remove("fadeIn");
+      void el.offsetWidth;
+      el.classList.add("fadeIn");
+    }
+
+    function setRangeFill(range){
+      const min = parseFloat(range.min || "0");
+      const max = parseFloat(range.max || "100");
+      const val = parseFloat(range.value || "0");
+      const pct = ((val - min) / (max - min)) * 100;
+      range.style.setProperty("--fill", `${Math.max(0, Math.min(100, pct))}%`);
+    }
+
+    function markAdjusting(itemEl){
+      itemEl.classList.add("isAdjusting");
+      window.clearTimeout(itemEl.__t);
+      itemEl.__t = window.setTimeout(()=> itemEl.classList.remove("isAdjusting"), 220);
+    }
 
     function areaNormFromQm(qm){
       const norm = (qm - AREA_MIN) / (AREA_MAX - AREA_MIN);
@@ -922,25 +1217,19 @@
     function computeTotal(){
       let s = 0;
       let addons = 0;
-
       const heightFactor = getAreaHeightFactor();
 
       for (const step of steps){
         const ans = state.answers[step.id];
         if (!ans) continue;
 
-        // Add-ons (Euro) – Wandarbeiten skalieren mit Raumhöhe
         if (typeof ans.add === "number"){
-          if (step.id === "walls"){
-            addons += ans.add * heightFactor;
-          } else {
-            addons += ans.add;
-          }
+          if (step.id === "walls") addons += ans.add * heightFactor;
+          else addons += ans.add;
         }
 
-        // Score-Teil
-        if (!weights[step.id]) continue;
         const w = weights[step.id];
+        if (!w) continue;
 
         if (step.id === "area"){
           const norm = typeof ans.scoreNorm === "number" ? ans.scoreNorm : 0;
@@ -957,42 +1246,66 @@
       }
 
       s = clamp01(s);
-
       const base = PRICE_MIN + s * (PRICE_MAX - PRICE_MIN);
       const total = base + addons;
-
       return Math.round(total * 100) / 100;
     }
 
     function breakdown(total){
-      const install = total * split.install;
-      const tiles   = total * split.tiles;
-      const paint   = total * split.paint;
-      const elec    = total * split.elec;
-      const equip   = total * split.equip;
+      const raw = {
+        install: total * split.install,
+        tiles:   total * split.tiles,
+        paint:   total * split.paint,
+        elec:    total * split.elec,
+        equip:   total * split.equip
+      };
 
-      const rounded = {
-        install: Math.round(install * 100) / 100,
-        tiles:   Math.round(tiles   * 100) / 100,
-        paint:   Math.round(paint   * 100) / 100,
-        elec:    Math.round(elec    * 100) / 100,
+      const out = {
+        install: Math.round(raw.install * 100) / 100,
+        tiles:   Math.round(raw.tiles   * 100) / 100,
+        paint:   Math.round(raw.paint   * 100) / 100,
+        elec:    Math.round(raw.elec    * 100) / 100,
         equip:   0
       };
-      const sum4 = rounded.install + rounded.tiles + rounded.paint + rounded.elec;
-      rounded.equip = Math.round((total - sum4) * 100) / 100;
-
-      return rounded;
+      const sum4 = out.install + out.tiles + out.paint + out.elec;
+      out.equip = Math.round((total - sum4) * 100) / 100;
+      return out;
     }
 
     function setProgress(){
       const current = state.stepIndex + 1;
       const totalSteps = steps.length;
-      const pct = ((current - 1) / (totalSteps - 1)) * 100;
-
+      const pct = totalSteps <= 1 ? 100 : ((current - 1) / (totalSteps - 1)) * 100;
       elProgress.style.width = pct + "%";
       elStepLabel.textContent = `Schritt ${current} von ${totalSteps}`;
       elMetaRight.textContent = `Schritt ${current} von ${totalSteps}`;
       elFooterMeta.textContent = `Schritt ${current} von ${totalSteps}`;
+    }
+
+    function setSelectedUI(stepId){
+      const opts = elOptions.querySelectorAll(".opt");
+      opts.forEach(btn=>{
+        btn.classList.remove("isSelected");
+        const v = btn.getAttribute("data-value");
+        const ans = state.answers[stepId];
+        if (ans && v && (ans.value + "") === (v + "")) btn.classList.add("isSelected");
+      });
+    }
+
+    function updateAreaLive(){
+      const L = parseFloat(elLen.value);
+      const W = parseFloat(elWid.value);
+      const H = parseFloat(elHei.value);
+
+      elLenVal.textContent = `${to1(L).toFixed(1).replace(".",",")} m`;
+      elWidVal.textContent = `${to1(W).toFixed(1).replace(".",",")} m`;
+      elHeiVal.textContent = `${to1(H).toFixed(1).replace(".",",")} m`;
+
+      const qm = to2(L * W);
+      const norm = areaNormFromQm(qm);
+
+      elAreaLive.textContent = `Grundfläche: ${qm.toFixed(2).replace(".",",")} qm · Höhe: ${to1(H).toFixed(1).replace(".",",")} m`;
+      return { L, W, H, qm, norm };
     }
 
     function render(){
@@ -1002,14 +1315,20 @@
       elQuestion.textContent = step.question;
       elHint.textContent = step.hint;
 
+      triggerFade(elQuestion);
+      triggerFade(elHint);
+
       elOptions.className = `grid ${step.grid || "cols-2"}`;
       elOptions.innerHTML = "";
       elResultWrap.style.display = "none";
 
-      // Area custom UI: nur im Flächen-Schritt
       elAreaCustomWrap.style.display = (step.id === "area") ? "block" : "none";
+      if (step.id === "area"){
+        setRangeFill(elLen); setRangeFill(elWid); setRangeFill(elHei);
+        updateAreaLive();
+        triggerFade(elAreaCustomWrap);
+      }
 
-      // Back-Button
       elBack.disabled = state.stepIndex === 0;
 
       if (step.id === "result"){
@@ -1018,32 +1337,33 @@
 
         elTotalOut.textContent = euro(total);
         elCInstall.textContent = euro(b.install);
-        elCTiles.textContent = euro(b.tiles);
-        elCPaint.textContent = euro(b.paint);
-        elCElec.textContent = euro(b.elec);
-        elCEquip.textContent = euro(b.equip);
+        elCTiles.textContent   = euro(b.tiles);
+        elCPaint.textContent   = euro(b.paint);
+        elCElec.textContent    = euro(b.elec);
+        elCEquip.textContent   = euro(b.equip);
 
         elResultWrap.style.display = "block";
+        triggerFade(elResultWrap);
         return;
       }
 
-      step.options.forEach((opt) => {
+      step.options.forEach(opt=>{
         const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "opt";
-        btn.setAttribute("aria-selected", "false");
+        btn.type="button";
+        btn.className="opt";
+        btn.setAttribute("data-value", opt.value);
 
         const text = document.createElement("div");
-        text.className = "optText";
+        text.className="optText";
 
         const main = document.createElement("div");
-        main.className = "optMain";
+        main.className="optMain";
         main.textContent = opt.label;
 
         text.appendChild(main);
 
         const chev = document.createElement("div");
-        chev.className = "chev";
+        chev.className="chev";
         chev.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1053,9 +1373,13 @@
         btn.appendChild(text);
         btn.appendChild(chev);
 
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", ()=>{
+          elOptions.classList.remove("pulse");
+          void elOptions.offsetWidth;
+          elOptions.classList.add("pulse");
+
           if (step.id === "area"){
-            state.answers[step.id] = {
+            state.answers.area = {
               value: opt.value,
               label: opt.label,
               scoreNorm: opt.scoreNorm ?? 0,
@@ -1073,9 +1397,8 @@
         elOptions.appendChild(btn);
       });
 
-      if (step.id === "area"){
-        updateAreaLive();
-      }
+      setSelectedUI(step.id);
+      triggerFade(elOptions);
     }
 
     function goNext(){
@@ -1084,56 +1407,157 @@
         render();
       }
     }
-
     function goBack(){
       if (state.stepIndex > 0){
         state.stepIndex--;
         render();
       }
     }
-
     elBack.addEventListener("click", goBack);
 
-    // ===== Area Slider Logic =====
-    function updateAreaLive(){
-      const L = parseFloat(elLen.value);
-      const W = parseFloat(elWid.value);
-      const H = parseFloat(elHei.value);
-
-      elLenVal.textContent = `${to1(L)} m`;
-      elWidVal.textContent = `${to1(W)} m`;
-      elHeiVal.textContent = `${to1(H)} m`;
-
-      const qm = to2(L * W);
-      const norm = areaNormFromQm(qm);
-
-      elAreaLive.textContent = `Grundfläche: ${qm.toFixed(2)} qm · Höhe: ${to1(H)} m`;
-      return { L, W, H, qm, norm };
-    }
-
-    ["input","change"].forEach(evt => {
-      elLen.addEventListener(evt, updateAreaLive);
-      elWid.addEventListener(evt, updateAreaLive);
-      elHei.addEventListener(evt, updateAreaLive);
+    // Slider listeners
+    ["input","change"].forEach(evt=>{
+      elLen.addEventListener(evt, ()=>{
+        setRangeFill(elLen);
+        updateAreaLive();
+        markAdjusting(elLenItem);
+      });
+      elWid.addEventListener(evt, ()=>{
+        setRangeFill(elWid);
+        updateAreaLive();
+        markAdjusting(elWidItem);
+      });
+      elHei.addEventListener(evt, ()=>{
+        setRangeFill(elHei);
+        updateAreaLive();
+        markAdjusting(elHeiItem);
+      });
     });
 
-    elApplyAreaBtn.addEventListener("click", () => {
-      const { L, W, H, qm, norm } = updateAreaLive();
+    elApplyAreaBtn.addEventListener("click", ()=>{
+      elAreaCustomWrap.classList.remove("pulse");
+      void elAreaCustomWrap.offsetWidth;
+      elAreaCustomWrap.classList.add("pulse");
 
+      const { L, W, H, qm, norm } = updateAreaLive();
       state.answers.area = {
         value: "custom",
-        label: `Individuell (${qm.toFixed(2)} qm)`,
+        label: `Individuell (${qm.toFixed(2).replace(".",",")} qm)`,
         scoreNorm: norm,
         add: 0,
         dims: { length: to1(L), width: to1(W), height: to1(H), area: qm }
       };
-
       goNext();
     });
 
     // =========================
-    // Init
+    // Kontakt-Modal + Mailto
     // =========================
+    function openModal(){
+      elLeadError.classList.remove("isOpen");
+      elModalOverlay.classList.add("isOpen");
+      elModalOverlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      setTimeout(()=> elLeadName.focus(), 60);
+    }
+    function closeModal(){
+      elModalOverlay.classList.remove("isOpen");
+      elModalOverlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    elCtaOpen.addEventListener("click", openModal);
+    elModalClose.addEventListener("click", closeModal);
+    elModalCancel.addEventListener("click", closeModal);
+    elModalOverlay.addEventListener("click", (e)=>{ if (e.target === elModalOverlay) closeModal(); });
+    window.addEventListener("keydown", (e)=>{ if (e.key === "Escape" && elModalOverlay.classList.contains("isOpen")) closeModal(); });
+
+    function isValidEmail(s){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || "").trim());
+    }
+
+    function buildAnswerSummary(){
+      const lines = [];
+      for (const step of steps){
+        if (step.id === "result") continue;
+        const ans = state.answers[step.id];
+        if (!ans) continue;
+
+        let valueText = ans.label ?? "";
+        if (step.id === "area" && ans.dims){
+          const a = ans.dims.area;
+          const h = ans.dims.height;
+          if (a && h) valueText = `${ans.label} | Grundfläche: ${String(a).replace(".",",")} qm | Höhe: ${String(h).replace(".",",")} m`;
+          if (ans.value === "custom" && ans.dims.length){
+            valueText = `${ans.label} | Länge: ${String(ans.dims.length).replace(".",",")} m | Breite: ${String(ans.dims.width).replace(".",",")} m | Höhe: ${String(ans.dims.height).replace(".",",")} m`;
+          }
+        }
+        lines.push(`- ${step.question}: ${valueText}`);
+      }
+      return lines.join("\n");
+    }
+
+    function buildResultSummary(){
+      const total = computeTotal();
+      const b = breakdown(total);
+      return [
+        "ERGEBNIS (Bad-Budgetrechner)",
+        `Gesamtkosten (unverbindlich): ${euro(total)}`,
+        "",
+        "Kostenaufteilung:",
+        `- Demontage / Montage / Installation: ${euro(b.install)}`,
+        `- Fliesenarbeiten: ${euro(b.tiles)}`,
+        `- Malerarbeiten: ${euro(b.paint)}`,
+        `- Elektroarbeiten: ${euro(b.elec)}`,
+        `- Ausstattung: ${euro(b.equip)}`,
+      ].join("\n");
+    }
+
+    function buildMailto(name, email, phone){
+      const ts = new Date().toLocaleString("de-DE");
+      const subject = `Bad-Anfrage – Ergebnis aus Budgetrechner (${name})`;
+      const body = [
+        "Hallo EliteBau Hamburg,",
+        "",
+        "ich habe den Bad-Budgetrechner genutzt und möchte eine Vor-Ort-Einschätzung bzw. ein Angebot anfragen.",
+        "",
+        "Kontaktdaten:",
+        `- Name: ${name}`,
+        `- E-Mail: ${email}`,
+        phone ? `- Telefon: ${phone}` : "- Telefon: (nicht angegeben)",
+        "",
+        buildResultSummary(),
+        "",
+        "Auswahl im Rechner:",
+        buildAnswerSummary(),
+        "",
+        `Zeitpunkt der Anfrage: ${ts}`,
+        "",
+        "Hinweis: Das Ergebnis ist unverbindlich und dient als Orientierung.",
+      ].join("\n");
+
+      return `mailto:${encodeURIComponent(LEAD_TO_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    elLeadSend.addEventListener("click", ()=>{
+      const name = String(elLeadName.value || "").trim();
+      const email = String(elLeadEmail.value || "").trim();
+      const phone = String(elLeadPhone.value || "").trim();
+      const consent = elLeadConsent.checked === true;
+
+      if (!name || !isValidEmail(email) || !consent){
+        elLeadError.classList.add("isOpen");
+        return;
+      }
+      elLeadError.classList.remove("isOpen");
+
+      const link = buildMailto(name, email, phone);
+      closeModal();
+      window.location.href = link;
+    });
+
+    // Init
+    setRangeFill(elLen); setRangeFill(elWid); setRangeFill(elHei);
     render();
   </script>
 </body>
